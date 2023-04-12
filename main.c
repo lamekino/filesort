@@ -3,6 +3,7 @@
 /* PATH_MAX requires _POSIX_C_SOURCE == 1 */
 #define _POSIX_C_SOURCE 1
 
+#include "error_handling.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,19 +13,6 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#define UNIMPLEMENTED do { \
-        fprintf(stderr, "%s[%d]: '%s()' not implemented\n", \
-                __FILE__, __LINE__, __FUNCTION__); \
-    } while (0)
-
-#define ASSERT(pred, msg) do { \
-        if (!(pred)) { \
-            fprintf(stderr, "%s[%d]: %s\n", __FILE__, __LINE__, msg); \
-            exit(1); \
-        } \
-    } while (0)
-
 
 void usage() {
     UNIMPLEMENTED;

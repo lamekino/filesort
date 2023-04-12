@@ -5,7 +5,8 @@ CCFLAGS = \
 	-std=c89 -ansi -ggdb -Wall -Wextra -Werror -Wno-unused-variable \
 	-Wno-unused-parameter -Wno-unused-but-set-variable
 
-SRC =
+SRC = \
+	error_handling.c
 
 HEADERS = \
 	$(SRC:.c=.h)
