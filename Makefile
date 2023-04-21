@@ -6,9 +6,10 @@ CCFLAGS = \
 	-Wno-unused-parameter -Wno-unused-but-set-variable
 
 SRC = \
-	error_handling.c
+	cli.c
 
 HEADERS = \
+	error_handling.h \
 	$(SRC:.c=.h)
 
 OBJ = \
