@@ -1,16 +1,33 @@
 #ifndef __ERROR_HANDLING_H
 #define __ERROR_HANDLING_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
-#define UNIMPLEMENTED do { \
+#define PASS do { \
         fprintf(stderr, "%s[%d]: '%s()' not implemented\n", \
                 __FILE__, __LINE__, __FUNCTION__); \
     } while (0)
 
-#define ASSERT(pred, msg) do { \
-        if (!(pred)) { \
-            fprintf(stderr, "%s[%d]: %s\n", __FILE__, __LINE__, msg); \
-            exit(1); \
-        } \
+#define UNIMPLEMENTED do { \
+        fprintf(stderr, "%s[%d]: '%s()' not implemented, exiting\n", \
+                __FILE__, __LINE__, __FUNCTION__); \
+        exit(EXIT_FAILURE); \
     } while (0)
 
+#define EXIT_WHEN(pred, msgs...) do { \
+        int errsv = errno; \
+        if (!(pred)) { \
+            break; \
+        } \
+\
+        fprintf(stderr, "ERROR: %s[%d]: ", __FILE__, __LINE__); \
+        fprintf(stderr, msgs); \
+        if (errsv > 0) { \
+            fprintf(stderr, "\n\t-> errno is '%s' (%d)\n", \
+                    strerror(errsv), errsv); \
+        } \
+        exit(EXIT_FAILURE); \
+    } while (0)
 #endif
