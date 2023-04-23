@@ -17,7 +17,8 @@
     X(HAS_NONE, 0) \
     X(HAS_EXTENSION, 1) \
     X(HAS_DUPLICATE, 2) \
-    X(HAS_PREFIX, 4)
+    X(HAS_PREFIX, 4) \
+    X(HAS_SUFFIX, 8)
 
 typedef enum rename_properties {
     #define ENUMERATE(a, b) a = b,
@@ -40,6 +41,10 @@ static void possible_filename(char *buffer,
                               const time_t creation_time,
                               const char *extension,
                               const struct Preferences *state) {
+
+        if ((int) condition & HAS_SUFFIX) {
+            UNIMPLEMENTED;
+        }
         switch ((int) condition) {
         case HAS_EXTENSION: {
             snprintf(buffer, max_len,
@@ -88,6 +93,7 @@ static void get_new_filename(char *buffer,
     /* TODO: make this not an abritrary looking shift */
     props |= (extension != NULL) << 0;
     props |= (state->prefix != NULL) << 2;
+    props |= (state->suffix != NULL) << 3;
 
     while (file_exists || num_duplicates == 0) {
         props |= (num_duplicates > 0) << 1;
@@ -122,13 +128,19 @@ void process_directory(const struct Preferences *state, DIR *dir, size_t max_fna
         get_new_filename(new_filename, max_fname_len, old_filename, &statinfo,
                 state);
 
-        printf("renaming '%s' -> '%s'\n", old_filename, new_filename);
 
         /*
          * FIXME: memory leak if this fails
          */
-        EXIT_WHEN(rename(old_filename, new_filename) != 0,
-                "could not rename file: %s", old_filename);
+        if (!state->dry_run) {
+            printf("renaming '%s' -> '%s'\n", old_filename, new_filename);
+            EXIT_WHEN(rename(old_filename, new_filename) != 0,
+                    "could not rename file: %s", old_filename);
+        }
+        else {
+            printf("would rename '%s' -> '%s'\n", old_filename, new_filename);
+        }
+
         free(new_filename);
     }
 }
