@@ -38,6 +38,20 @@ static int ensure_args(flag_t flag, const char *type, int num_needed,
     return num_needed + 1;
 }
 
+static int verify_number(char *num, char *purpose, int min, int max) {
+    int n = atoi(num);
+    EXIT_WHEN(n == 0,
+            "error parsing number of %s in '%s'", purpose, num);
+    EXIT_WHEN(n > -1 && n < min,
+            "%d is an invaild number of %s (minimum: %d)",
+            n, purpose, min);
+    EXIT_WHEN(n > -1 && n > max,
+            "%d is an invaild number of %s (maximum: %d)",
+            n, purpose, max);
+
+    return n;
+}
+
 void usage(FILE *stream, const char *progname) {
     fprintf(stream,"%s usage:\n", progname);
 
@@ -52,30 +66,29 @@ int handle_flag(int index, int argc, char *argv[], struct Preferences *state) {
 
     switch (flag[1]) {
     case FLAG_THREAD_NUM: {
-        num_parsed = ensure_args(FLAG_THREAD_NUM, "number", 1, argc, index);
+        num_parsed =
+            ensure_args(FLAG_THREAD_NUM, "number", 1, argc, index);
 
-        unsigned int num_threads = atoi(argv[index + 1]);
-
-        EXIT_WHEN(num_threads == 0,
-                "error parsing number of threads: %s", argv[index + 1]);
-        EXIT_WHEN(num_threads < MIN_THREADS,
-                "%d is an invaild number of threads (minimum: %d)",
-                num_threads, MIN_THREADS);
-
-        state->num_threads = num_threads;
+        state->num_threads =
+            verify_number(argv[index + 1], "thread", 1, -1);
     } break;
     case FLAG_FILENAME_PREFIX: {
-        num_parsed = ensure_args(FLAG_FILENAME_PREFIX, "string", 1, argc, index);
+        num_parsed =
+            ensure_args(FLAG_FILENAME_PREFIX, "string", 1, argc, index);
 
         state->prefix = argv[index + 1];
     } break;
     case FLAG_FILENAME_SUFFIX: {
-        num_parsed = ensure_args(FLAG_FILENAME_SUFFIX, "string", 1, argc, index);
+        num_parsed =
+            ensure_args(FLAG_FILENAME_SUFFIX, "string", 1, argc, index);
 
         state->suffix = argv[index + 1];
     } break;
     case FLAG_CONFIRMATION: {
         state->use_confirm = 1;
+    } break;
+    case FLAG_DRY_RUN: {
+        state->dry_run = 1;
     } break;
     case FLAG_HELP:
         usage(stdout, argv[0]);
