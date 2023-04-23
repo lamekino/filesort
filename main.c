@@ -24,6 +24,9 @@ int main(int argc, char *argv[]) {
     char starting_path[PATH_MAX];
     char current_dir[PATH_MAX];
     int idx, increment_amount = 1;
+    char **files_to_process = NULL;
+    int number_of_files = 0;
+
 
     if (argc < 2) {
         usage(stderr, argv[0]);
@@ -36,16 +39,25 @@ int main(int argc, char *argv[]) {
     );
 
     for (idx = 1; idx < argc; idx += increment_amount) {
+        if (argv[idx][0] == '-') {
+            increment_amount = handle_flag(idx, argc, argv, &program_state);
+        }
+        else {
+            increment_amount = 1;
+            files_to_process = realloc(files_to_process,
+                    sizeof(char*) * ++number_of_files);
+            EXIT_WHEN(files_to_process == NULL,
+                "could not resize file list"
+            );
+            files_to_process[number_of_files - 1] = argv[idx];
+        }
+    }
+
+    for (idx = 0; idx < number_of_files; idx++) {
         size_t new_filename_len = 0;
         DIR *dir = NULL;
 
-        if (argv[idx][0] == '-') {
-            increment_amount = handle_flag(idx, argc, argv, &program_state);
-            continue;
-        }
-        increment_amount = 1;
-
-        realpath(argv[idx], current_dir);
+        realpath(files_to_process[idx], current_dir);
         new_filename_len = PATH_MAX - strnlen(current_dir, PATH_MAX);
         dir = opendir(current_dir);
 
@@ -64,6 +76,8 @@ int main(int argc, char *argv[]) {
         /* restore starting path */
         chdir(starting_path);
     }
+
+    free(files_to_process);
 
     return EXIT_SUCCESS;
 }
