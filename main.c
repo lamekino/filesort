@@ -1,7 +1,6 @@
-/* realpath requires _XOPEN_SOURCE >= 500 */
 #define _XOPEN_SOURCE 500
-/* strnlen requires _POSIX_C_SOURCE >= 200809L */
 #define _POSIX_C_SOURCE 200809L
+
 /* TODO: make this a sensible number */
 #define FNAME_MIN 32
 
@@ -20,10 +19,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-int main(const int argc, const char *argv[]) {
+int main(int argc, char *argv[]) {
+    struct Preferences program_state = {0};
     char starting_path[PATH_MAX];
     char current_dir[PATH_MAX];
-    int idx, args_processed;
+    int idx, increment_amount = 1;
+
     if (argc < 2) {
         usage(stderr, argv[0]);
         exit(EXIT_FAILURE);
@@ -34,14 +35,15 @@ int main(const int argc, const char *argv[]) {
         "could not get the current directory"
     );
 
-    for (idx = 1; idx < argc; idx++) {
+    for (idx = 1; idx < argc; idx += increment_amount) {
         size_t new_filename_len = 0;
         DIR *dir = NULL;
 
         if (argv[idx][0] == '-') {
-            args_processed = handle_flag(idx, argc, argv);
+            increment_amount = handle_flag(idx, argc, argv, &program_state);
             continue;
         }
+        increment_amount = 1;
 
         realpath(argv[idx], current_dir);
         new_filename_len = PATH_MAX - strnlen(current_dir, PATH_MAX);
@@ -57,11 +59,10 @@ int main(const int argc, const char *argv[]) {
             "can't access directory '%s'", current_dir
         );
 
-        process_directory(NULL, dir, new_filename_len);
+        process_directory(&program_state, dir, new_filename_len);
         closedir(dir);
         /* restore starting path */
         chdir(starting_path);
-        args_processed++;
     }
 
     return EXIT_SUCCESS;
