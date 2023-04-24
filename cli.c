@@ -11,13 +11,16 @@
     X(FLAG_FILENAME_PREFIX, 'P', \
         "set a string to prefix renamed files") \
     X(FLAG_FILENAME_SUFFIX, 'S', \
-        "set a string to suffix renamed files") \
+        "[WIP] set a string to suffix renamed files") \
     X(FLAG_THREAD_NUM, 't', \
-        "set a number of threads to use") \
+        "[WIP] set a number of threads to use") \
     X(FLAG_DRY_RUN, 'd', \
-        "dry run") \
+        "dry run, don't modify files but show changes") \
     X(FLAG_CONFIRMATION, 'p', \
-        "confirm each file change" )
+        "confirm each file change" ) \
+    X(FLAG_COPY, 'c', \
+        "[WIP] instead of renaming files, make a copy with the new name, " \
+        "outputs to specified directory")
 
 enum program_arguements {
     #define ENUMERATE(a, b, _) a = b,
@@ -31,7 +34,7 @@ typedef char flag_t;
 static int ensure_args(flag_t flag, const char *type, int num_needed,
         int total, int pos) {
     EXIT_WHEN(num_needed + pos > total,
-        "-%c requires %d %s Preferences but was given %d",
+        "-%c requires %d %s arguments but was given %d",
         flag, num_needed, type, total - pos
     );
 
@@ -41,13 +44,16 @@ static int ensure_args(flag_t flag, const char *type, int num_needed,
 static int verify_number(char *num, char *purpose, int min, int max) {
     int n = atoi(num);
     EXIT_WHEN(n == 0,
-            "error parsing number of %s in '%s'", purpose, num);
+        "error parsing number of %s in '%s'", purpose, num
+    );
     EXIT_WHEN(n > -1 && n < min,
-            "%d is an invaild number of %s (minimum: %d)",
-            n, purpose, min);
+        "%d is an invaild number of %s (minimum: %d)",
+        n, purpose, min
+    );
     EXIT_WHEN(n > -1 && n > max,
-            "%d is an invaild number of %s (maximum: %d)",
-            n, purpose, max);
+        "%d is an invaild number of %s (maximum: %d)",
+        n, purpose, max
+    );
 
     return n;
 }
@@ -55,7 +61,7 @@ static int verify_number(char *num, char *purpose, int min, int max) {
 void usage(FILE *stream, const char *progname) {
     fprintf(stream,"%s usage:\n", progname);
 
-    #define PRINT(_, b, c) fprintf(stream, "\t-%c\t%s\n", b, c);
+    #define PRINT(_, b, c) fprintf(stream, "    -%c    %s\n", b, c);
         ARGUMENT_XMAP(PRINT)
     #undef PRINT
 }
