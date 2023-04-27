@@ -6,6 +6,7 @@ CCFLAGS = \
 	-Wno-unused-parameter -Wno-unused-but-set-variable
 
 SRC = \
+	copy_file.c \
 	usage.c \
 	process_directory.c \
 	arguments.c
