@@ -14,13 +14,14 @@
 #include <sys/stat.h>
 
 #define MASK_XMAP(X) \
+    /* mask name -> shift level */ \
     X(HAS_NONE, 0) \
     X(HAS_EXTENSION, 1) \
     X(HAS_DUPLICATE, 2) \
     X(HAS_PREFIX, 4) \
     X(HAS_SUFFIX, 8)
 
-typedef enum rename_properties {
+enum rename_properties {
     #define ENUMERATE(a, b) a = b,
         MASK_XMAP(ENUMERATE)
     #undef ENUMERATE
@@ -32,16 +33,17 @@ typedef enum rename_properties {
     #define SET_ALL_BITS(a, b) +(b)
         HAS_ALL_PROPERTIES = MASK_XMAP(SET_ALL_BITS)
     #undef SET_ALL_BITS
-} properties_t;
+};
+
+typedef int rename_mask;
 
 static void possible_filename(char *buffer,
-                              const properties_t condition,
+                              const rename_mask condition,
                               int duplicates,
                               const size_t max_len,
                               const time_t creation_time,
                               const char *extension,
                               const struct Preferences *state) {
-
         if ((int) condition & HAS_SUFFIX) {
             UNIMPLEMENTED;
         }
