@@ -37,7 +37,7 @@ static int verify_number(char *num, char *purpose, int min, int max) {
     return n;
 }
 
-int handle_flag(int index, int argc, char *argv[], struct user_settings *state) {
+static int handle_flag(int index, int argc, char *argv[], struct user_settings *state) {
     const char *flag = argv[index];
     int args_parsed = 1;
 
@@ -77,4 +77,28 @@ int handle_flag(int index, int argc, char *argv[], struct user_settings *state) 
     }
 
     return args_parsed;
+}
+
+int read_args(char ***file_list,
+              struct user_settings *settings,
+              int argc,
+              char *argv[]) {
+    int idx, increment_amount = 1, number_of_files = 0;
+
+    for (idx = 1; idx < argc; idx += increment_amount) {
+        if (argv[idx][0] == '-') {
+            increment_amount = handle_flag(idx, argc, argv, settings);
+        }
+        else {
+            increment_amount = 1;
+            (*file_list) = realloc((*file_list),
+                    sizeof(char*) * ++number_of_files);
+            EXIT_WHEN(*file_list == NULL,
+                "could not resize file list"
+            );
+            (*file_list)[number_of_files - 1] = argv[idx];
+        }
+    }
+
+    return number_of_files;
 }

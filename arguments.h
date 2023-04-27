@@ -35,5 +35,8 @@ struct user_settings {
     int dry_run:1;
 };
 
-int handle_flag(int index, int argc, char *argv[], struct user_settings *state);
+int read_args(char ***file_list,
+              struct user_settings *settings,
+              int argc,
+              char *argv[]);
 #endif

@@ -21,7 +21,7 @@
 #include <sys/stat.h>
 
 int main(int argc, char *argv[]) {
-    struct user_settings program_state = {0};
+    struct user_settings settings = {0};
     char starting_path[PATH_MAX];
     char current_dir[PATH_MAX];
     int idx, increment_amount = 1;
@@ -40,20 +40,7 @@ int main(int argc, char *argv[]) {
         "could not get the current directory"
     );
 
-    for (idx = 1; idx < argc; idx += increment_amount) {
-        if (argv[idx][0] == '-') {
-            increment_amount = handle_flag(idx, argc, argv, &program_state);
-        }
-        else {
-            increment_amount = 1;
-            files_to_process = realloc(files_to_process,
-                    sizeof(char*) * ++number_of_files);
-            EXIT_WHEN(files_to_process == NULL,
-                "could not resize file list"
-            );
-            files_to_process[number_of_files - 1] = argv[idx];
-        }
-    }
+    number_of_files = read_args(&files_to_process, &settings, argc, argv);
 
     for (idx = 0; idx < number_of_files; idx++) {
         size_t new_filename_len = 0;
@@ -73,7 +60,7 @@ int main(int argc, char *argv[]) {
             "can't access directory '%s'", current_dir
         );
 
-        process_directory(&program_state, dir, new_filename_len);
+        process_directory(&settings, dir, new_filename_len);
         closedir(dir);
         /* restore starting path */
         chdir(starting_path);
