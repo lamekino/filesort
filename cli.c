@@ -18,6 +18,8 @@
         "dry run, don't modify files but show changes") \
     X(FLAG_CONFIRMATION, 'p', \
         "confirm each file change" ) \
+    X(FLAG_DIR_AS_FILE, 'F', \
+        "[WIP] treat arguments as individual files" ) \
     X(FLAG_COPY, 'C', \
         "[WIP] instead of renaming files, make a copy with the new name, " \
         "outputs to specified directory")
