@@ -16,25 +16,25 @@
 
 #define MASK_XMAP(X) \
     /* mask name -> shift level */ \
-    X(HAS_NONE, 0) \
-    X(HAS_EXTENSION, 1) \
-    X(HAS_DUPLICATE, 2) \
-    X(HAS_PREFIX, 4) \
-    X(HAS_SUFFIX, 8)
+    X(HAS_EXTENSION, 0) \
+    X(HAS_DUPLICATE, 1) \
+    X(HAS_PREFIX, 2) \
+    X(HAS_SUFFIX, 3)
 
 enum rename_properties {
-    #define ENUMERATE(a, b) a = b,
+    #define ENUMERATE(a, b) a = 1 << b,
         MASK_XMAP(ENUMERATE)
     #undef ENUMERATE
-
-    /*
-     * NOTE: addition is the same as or for powers of two
-     * this enables all the flags while keeping the bits after 0
-     */
-    #define SET_ALL_BITS(a, b) +(b)
-        HAS_ALL_PROPERTIES = MASK_XMAP(SET_ALL_BITS)
-    #undef SET_ALL_BITS
 };
+
+enum mask_shfit_level {
+    /* IDX_HAS_EXTENSION = 0, ... */
+    #define ENUMERATE(a, b) IDX_##a = b,
+        MASK_XMAP(ENUMERATE)
+    #undef ENUMERATE
+};
+
+#define SET_BIT(bit, pos) ((bit) << (pos));
 
 typedef unsigned int rename_mask_t;
 
@@ -100,19 +100,18 @@ static void get_new_filename(char *buffer,
                              file_info_t *info,
                              const struct stat *stat) {
     const struct user_settings *settings = info->user_settings;
-    rename_mask_t properties = HAS_NONE;
+    rename_mask_t properties = 0;
     int file_exists = 0;
 
     info->creation_time = stat->st_ctime;
     info->extension = strrchr(info->filename, '.');
 
-    /* TODO: make this not an abritrary looking shift */
-    properties |= (info->extension != NULL) << 0;
-    properties |= (settings->prefix != NULL) << 2;
-    properties |= (settings->suffix != NULL) << 3;
+    properties |= SET_BIT(info->extension != NULL, IDX_HAS_EXTENSION);
+    properties |= SET_BIT(settings->prefix != NULL, IDX_HAS_PREFIX);
+    properties |= SET_BIT(settings->suffix != NULL, IDX_HAS_SUFFIX);
 
     while (file_exists || info->num_duplicates == 0) {
-        properties |= (info->num_duplicates > 0) << 1;
+        properties |= SET_BIT(info->num_duplicates > 0, IDX_HAS_DUPLICATE);
         possible_filename(buffer, max_len, properties, info);
 
         file_exists = access(buffer, F_OK) == 0;
