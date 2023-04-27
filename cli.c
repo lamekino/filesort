@@ -68,24 +68,24 @@ void usage(FILE *stream, const char *progname) {
 
 int handle_flag(int index, int argc, char *argv[], struct Preferences *state) {
     const char *flag = argv[index];
-    int num_parsed = 1;
+    int args_parsed = 1;
 
     switch (flag[1]) {
     case FLAG_THREAD_NUM: {
-        num_parsed =
+        args_parsed =
             ensure_args(FLAG_THREAD_NUM, "number", 1, argc, index);
 
         state->num_threads =
             verify_number(argv[index + 1], "thread", 1, -1);
     } break;
     case FLAG_FILENAME_PREFIX: {
-        num_parsed =
+        args_parsed =
             ensure_args(FLAG_FILENAME_PREFIX, "string", 1, argc, index);
 
         state->prefix = argv[index + 1];
     } break;
     case FLAG_FILENAME_SUFFIX: {
-        num_parsed =
+        args_parsed =
             ensure_args(FLAG_FILENAME_SUFFIX, "string", 1, argc, index);
 
         state->suffix = argv[index + 1];
@@ -105,5 +105,5 @@ int handle_flag(int index, int argc, char *argv[], struct Preferences *state) {
         exit(EXIT_FAILURE);
     }
 
-    return num_parsed;
+    return args_parsed;
 }
