@@ -34,7 +34,7 @@ enum mask_shfit_level {
     #undef ENUMERATE
 };
 
-#define SET_BIT(bit, pos) ((bit) << (pos));
+#define SET_BIT(pos, mask, bit) ((mask) |= ((bit) << (pos)))
 
 typedef unsigned int rename_mask_t;
 
@@ -106,12 +106,16 @@ static void get_new_filename(char *buffer,
     info->creation_time = stat->st_ctime;
     info->extension = strrchr(info->filename, '.');
 
-    properties |= SET_BIT(info->extension != NULL, IDX_HAS_EXTENSION);
-    properties |= SET_BIT(settings->prefix != NULL, IDX_HAS_PREFIX);
-    properties |= SET_BIT(settings->suffix != NULL, IDX_HAS_SUFFIX);
+   SET_BIT(IDX_HAS_EXTENSION, properties,
+       info->extension != NULL);
+   SET_BIT(IDX_HAS_PREFIX, properties,
+       settings->prefix != NULL);
+   SET_BIT(IDX_HAS_SUFFIX, properties,
+       settings->suffix != NULL);
 
     while (file_exists || info->num_duplicates == 0) {
-        properties |= SET_BIT(info->num_duplicates > 0, IDX_HAS_DUPLICATE);
+        SET_BIT(IDX_HAS_DUPLICATE, properties,
+            info->num_duplicates > 0);
         possible_filename(buffer, max_len, properties, info);
 
         file_exists = access(buffer, F_OK) == 0;
@@ -165,6 +169,9 @@ void process_directory(const struct user_settings *settings,
             );
         }
         else {
+            /*
+             * BUG: duplicates are ignored since no file is created
+             */
             printf("would rename '%s' -> '%s'\n",
                     info.filename,
                     rename_buffer);
