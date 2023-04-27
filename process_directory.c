@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #define _XOPEN_SOURCE 500
 #define _POSIX_C_SOURCE 200809L
 
@@ -45,46 +46,52 @@ typedef struct {
     const struct user_settings *user_settings;
 } file_info_t;
 
+static int append(char *buffer,
+                  const size_t current_len,
+                  const size_t max_len,
+                  const char *fmt,
+                  ...) {
+    size_t new_len;
+    va_list ap;
+    va_start(ap, fmt);
+    new_len = vsnprintf(buffer + current_len, max_len - current_len, fmt, ap);
+    va_end(ap);
+    return new_len;
+}
+
 static void possible_filename(char *buffer,
                               const size_t max_len,
                               const rename_mask_t properties,
                               const file_info_t *info) {
+    size_t offset = 0;
     const struct user_settings *settings = info->user_settings;
-    if ((int) properties & HAS_SUFFIX) {
-        UNIMPLEMENTED;
+    /*
+     * Do the pre- timestamp parts
+     */
+    if (properties & HAS_PREFIX) {
+        offset += append(buffer, offset, max_len,
+                "%s", settings->prefix);
     }
-    switch ((int) properties) {
-    case HAS_EXTENSION: {
-        snprintf(buffer, max_len,
-                "%ld%s", info->creation_time, info->extension);
-    } break;
-    case HAS_DUPLICATE: {
-        snprintf(buffer, max_len,
-                "%ld.%d", info->creation_time, info->num_duplicates);
-    } break;
-    case HAS_PREFIX: {
-        snprintf(buffer, max_len,
-                "%s%ld", settings->prefix, info->creation_time);
-    } break;
-    case HAS_EXTENSION | HAS_DUPLICATE: {
-        snprintf(buffer, max_len,
-                "%ld.%d%s", info->creation_time, info->num_duplicates,
-                info->extension);
-    } break;
-    case HAS_EXTENSION | HAS_PREFIX: {
-        snprintf(buffer, max_len,
-                "%s%ld%s", settings->prefix, info->creation_time,
-                info->extension);
-    } break;
-    case HAS_ALL_PROPERTIES: {
-        snprintf(buffer, max_len,
-                "%s%ld.%d%s", settings->prefix, info->creation_time,
-                info->num_duplicates, info->extension);
-    } break;
-    default: { /* has no special properties */
-        snprintf(buffer, max_len,
-                "%ld", info->creation_time);
-    } break;
+    /*
+     * add the date info
+     */
+    offset += append(buffer, offset, max_len,
+            "%ld", info->creation_time);
+
+    /*
+     * do the post- timestamp parts
+     */
+    if (properties & HAS_DUPLICATE) {
+        offset += append(buffer, offset, max_len,
+                ".%d", info->num_duplicates);
+    }
+    if (properties & HAS_EXTENSION) {
+        offset += append(buffer, offset, max_len,
+                "%s", info->extension);
+    }
+    if (properties & HAS_SUFFIX) {
+        offset += append(buffer, offset, max_len,
+                "%s", settings->suffix);
     }
 }
 
@@ -113,7 +120,9 @@ static void get_new_filename(char *buffer,
     }
 }
 
-void process_directory(const struct user_settings *state, DIR *dir, size_t max_fname_len) {
+void process_directory(const struct user_settings *settings,
+                       DIR *dir,
+                       size_t max_fname_len) {
     struct dirent *dir_entry = NULL;
     file_info_t info;
     char confirm[64];
@@ -128,7 +137,7 @@ void process_directory(const struct user_settings *state, DIR *dir, size_t max_f
 
         /* set the known info about a file */
         info = (file_info_t) {
-            .user_settings = state,
+            .user_settings = settings,
             .filename = dir_entry->d_name,
         };
 
@@ -147,7 +156,7 @@ void process_directory(const struct user_settings *state, DIR *dir, size_t max_f
         /*
          * FIXME: memory leak if this fails
          */
-        if (!state->dry_run) {
+        if (!settings->dry_run) {
             printf("renaming '%s' -> '%s'\n",
                     info.filename,
                     rename_buffer);
