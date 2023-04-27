@@ -27,7 +27,7 @@ enum rename_properties {
     #undef ENUMERATE
 };
 
-enum mask_shfit_level {
+enum mask_shift_level {
     /* IDX_HAS_EXTENSION = 0, ... */
     #define ENUMERATE(a, b) IDX_##a = b,
         MASK_XMAP(ENUMERATE)
