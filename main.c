@@ -24,15 +24,14 @@ int main(int argc, char *argv[]) {
     struct user_settings settings = {0};
     char starting_path[PATH_MAX];
     char current_dir[PATH_MAX];
-    int idx, increment_amount = 1;
+    int idx;
     char **files_to_process = NULL;
     int number_of_files = 0;
-
 
     if (argc < 2) {
         fprintf(stderr, "%s requires at least one argument\n", argv[0]);
         usage(stderr, argv[0]);
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     /* get the path the program was started in */

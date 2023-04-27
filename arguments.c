@@ -96,6 +96,7 @@ int read_args(char ***file_list,
             EXIT_WHEN(*file_list == NULL,
                 "could not resize file list"
             );
+
             (*file_list)[number_of_files - 1] = argv[idx];
         }
     }
