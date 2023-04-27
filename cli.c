@@ -17,8 +17,8 @@
     X(FLAG_DRY_RUN, 'd', \
         "dry run, don't modify files but show changes") \
     X(FLAG_CONFIRMATION, 'p', \
-        "[WIP] confirm each file change" ) \
-    X(FLAG_COPY, 'c', \
+        "confirm each file change" ) \
+    X(FLAG_COPY, 'C', \
         "[WIP] instead of renaming files, make a copy with the new name, " \
         "outputs to specified directory")
 
