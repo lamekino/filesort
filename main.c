@@ -20,7 +20,7 @@
 #include <sys/stat.h>
 
 int main(int argc, char *argv[]) {
-    struct Preferences program_state = {0};
+    struct user_settings program_state = {0};
     char starting_path[PATH_MAX];
     char current_dir[PATH_MAX];
     int idx, increment_amount = 1;

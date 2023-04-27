@@ -4,5 +4,5 @@
 #include <stdlib.h>
 #include <dirent.h>
 
-void process_directory(const struct Preferences *state, DIR *dir, size_t max_fname_len);
+void process_directory(const struct user_settings *state, DIR *dir, size_t max_fname_len);
 #endif

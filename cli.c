@@ -66,7 +66,7 @@ void usage(FILE *stream, const char *progname) {
     #undef PRINT
 }
 
-int handle_flag(int index, int argc, char *argv[], struct Preferences *state) {
+int handle_flag(int index, int argc, char *argv[], struct user_settings *state) {
     const char *flag = argv[index];
     int args_parsed = 1;
 

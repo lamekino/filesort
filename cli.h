@@ -2,7 +2,7 @@
 #define __CLI_H
 #include <stdio.h>
 
-struct Preferences {
+struct user_settings {
     size_t num_threads;
     char *prefix;
     char *suffix;
@@ -11,5 +11,5 @@ struct Preferences {
 };
 
 void usage(FILE *stream, const char *progname);
-int handle_flag(int index, int argc, char *argv[], struct Preferences *state);
+int handle_flag(int index, int argc, char *argv[], struct user_settings *state);
 #endif
