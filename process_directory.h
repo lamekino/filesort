@@ -1,6 +1,6 @@
 #ifndef __PROCESS_DIRECTORY_H
 #define __PROCESS_DIRECTORY_H
-#include "cli.h"
+#include "arguments.h"
 #include <stdlib.h>
 #include <dirent.h>
 

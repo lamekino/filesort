@@ -1,4 +1,4 @@
-#include "cli.h"
+#include "arguments.h"
 #include "error_handling.h"
 #include <stdio.h>
 #include <stdlib.h>

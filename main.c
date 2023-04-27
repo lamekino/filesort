@@ -4,7 +4,7 @@
 /* TODO: make this a sensible number */
 #define FNAME_MIN 32
 
-#include "cli.h"
+#include "arguments.h"
 #include "process_directory.h"
 #include "error_handling.h"
 

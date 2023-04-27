@@ -7,7 +7,7 @@ CCFLAGS = \
 
 SRC = \
 	process_directory.c \
-	cli.c
+	arguments.c
 
 HEADERS = \
 	error_handling.h \
