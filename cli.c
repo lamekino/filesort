@@ -11,13 +11,13 @@
     X(FLAG_FILENAME_PREFIX, 'P', \
         "set a string to prefix renamed files") \
     X(FLAG_FILENAME_SUFFIX, 'S', \
-        "[WIP] set a string to suffix renamed files") \
+        "set a string to suffix renamed files") \
     X(FLAG_THREAD_NUM, 't', \
         "[WIP] set a number of threads to use") \
     X(FLAG_DRY_RUN, 'd', \
         "dry run, don't modify files but show changes") \
     X(FLAG_CONFIRMATION, 'p', \
-        "confirm each file change" ) \
+        "[WIP] confirm each file change" ) \
     X(FLAG_COPY, 'c', \
         "[WIP] instead of renaming files, make a copy with the new name, " \
         "outputs to specified directory")
