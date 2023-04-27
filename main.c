@@ -44,10 +44,12 @@ int main(int argc, char *argv[]) {
     for (idx = 0; idx < number_of_files; idx++) {
         size_t new_filename_len = 0;
         DIR *dir = NULL;
+        int chdir_status = 0;
 
         realpath(files_to_process[idx], current_dir);
         new_filename_len = PATH_MAX - strnlen(current_dir, PATH_MAX);
         dir = opendir(current_dir);
+        chdir_status = chdir(current_dir);
 
         EXIT_WHEN(new_filename_len < FNAME_MIN,
             "path '%s' too long to rename file", current_dir
@@ -55,7 +57,7 @@ int main(int argc, char *argv[]) {
         EXIT_WHEN(dir == NULL,
             "could not open directory %s", current_dir
         );
-        EXIT_WHEN(chdir(current_dir) != 0,
+        EXIT_WHEN(chdir_status != 0,
             "can't access directory '%s'", current_dir
         );
 
