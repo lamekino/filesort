@@ -37,7 +37,10 @@ static int verify_number(char *num, char *purpose, int min, int max) {
     return n;
 }
 
-static int handle_flag(int index, int argc, char *argv[], struct user_settings *state) {
+static int handle_flag(int index,
+                       int argc,
+                       char *argv[],
+                       struct user_settings *settings) {
     const char *flag = argv[index];
     int args_parsed = 1;
 
@@ -46,26 +49,36 @@ static int handle_flag(int index, int argc, char *argv[], struct user_settings *
         args_parsed =
             ensure_args(FLAG_THREAD_NUM, "number", 1, argc, index);
 
-        state->num_threads =
+        settings->num_threads =
             verify_number(argv[index + 1], "thread", 1, -1);
     } break;
     case FLAG_FILENAME_PREFIX: {
         args_parsed =
             ensure_args(FLAG_FILENAME_PREFIX, "string", 1, argc, index);
 
-        state->prefix = argv[index + 1];
+        settings->prefix = argv[index + 1];
     } break;
     case FLAG_FILENAME_SUFFIX: {
         args_parsed =
             ensure_args(FLAG_FILENAME_SUFFIX, "string", 1, argc, index);
 
-        state->suffix = argv[index + 1];
+        settings->suffix = argv[index + 1];
     } break;
     case FLAG_CONFIRMATION: {
-        state->use_confirm = 1;
+        settings->use_confirm = 1;
+    } break;
+    case FLAG_COPY_FILES: {
+        settings->use_copy = 1;
+    } break;
+    case FLAG_COPY_INTO_DIR: {
+        args_parsed =
+            ensure_args(FLAG_FILENAME_SUFFIX, "string", 1, argc, index);
+
+        settings->copy_dir = argv[index + 1];
+        settings->use_copy = 1;
     } break;
     case FLAG_DRY_RUN: {
-        state->dry_run = 1;
+        settings->dry_run = 1;
     } break;
     case FLAG_HELP:
         usage(stdout, argv[0]);
@@ -91,8 +104,8 @@ int read_args(char ***file_list,
         }
         else {
             increment_amount = 1;
-            (*file_list) = realloc((*file_list),
-                    sizeof(char*) * ++number_of_files);
+            number_of_files++;
+            *file_list = realloc(*file_list, sizeof(char*) * number_of_files);
             EXIT_WHEN(*file_list == NULL,
                 "could not resize file list"
             );

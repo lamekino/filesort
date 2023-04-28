@@ -17,7 +17,9 @@
         "confirm each file change" ) \
     X(FLAG_DIR_AS_FILE, 'F', \
         "[WIP] treat arguments as individual files" ) \
-    X(FLAG_COPY, 'C', \
+    X(FLAG_COPY_FILES, 'c', \
+        "[WIP] copies files instead of renaming them") \
+    X(FLAG_COPY_INTO_DIR, 'C', \
         "[WIP] instead of renaming files, make a copy with the new name, " \
         "outputs to specified directory")
 
@@ -29,10 +31,15 @@ enum program_arguements {
 
 struct user_settings {
     size_t num_threads;
+
     char *prefix;
     char *suffix;
+
     int use_confirm:1;
     int dry_run:1;
+
+    int use_copy:1;
+    char *copy_dir;
 };
 
 int read_args(char ***file_list,
