@@ -143,6 +143,9 @@ static int confirm_rename(int use_confirm,
     return 0;
 }
 
+/*
+ * TODO: refactor this into smaller parts
+ */
 void process_directory(const struct user_settings *settings,
                        DIR *dir,
                        size_t max_fname_len) {
