@@ -4,7 +4,6 @@
 #include "arguments.h"
 #include "process_directory.h"
 #include "error_handling.h"
-#include "copy_file.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -124,25 +123,6 @@ static void get_new_filename(char *buffer,
     }
 }
 
-static int confirm_rename(int use_confirm,
-                          const char *orig_name,
-                          const char *new_name) {
-    char user_input[64];
-
-    if (!use_confirm) {
-        return 1;
-    }
-
-    printf("rename '%s' to '%s'? [y/N] ", orig_name, new_name);
-    fgets(user_input, 64, stdin);
-    if (user_input[0] == 'y' || user_input[0] == 'Y') {
-        return 1;
-    }
-
-    printf("skipping '%s'...\n", orig_name);
-    return 0;
-}
-
 /*
  * TODO: refactor this into smaller parts
  */
@@ -151,7 +131,6 @@ void process_directory(const struct user_settings *settings,
                        size_t max_fname_len) {
     struct dirent *dir_entry = NULL;
     file_info_t info;
-    char confirm[64];
 
     while ((dir_entry = readdir(dir))) {
         char *rename_buffer = NULL;
@@ -178,34 +157,20 @@ void process_directory(const struct user_settings *settings,
 
         get_new_filename(rename_buffer, max_fname_len, &info, &stat_info);
 
-
-        if (!settings->dry_run) {
-            if (!confirm_rename(settings->use_confirm, info.filename, rename_buffer))
-                continue;
-
+        if (settings->transform_file == NULL) {
             printf("renaming '%s' -> '%s'\n",
-                    info.filename,
-                    rename_buffer);
+                info.filename,
+                rename_buffer);
             /*
              * FIXME: memory leak if this fails
              */
-            if (settings->transform_file == NULL) {
-                EXIT_WHEN(
-                    rename(info.filename, rename_buffer) != 0,
-                    "could not rename file: %s", info.filename
-                );
-            }
-            else {
-                settings->transform_file(info.filename, rename_buffer);
-            }
+            EXIT_WHEN(
+                rename(info.filename, rename_buffer) != 0,
+                "could not rename file: %s", info.filename
+            );
         }
         else {
-            /*
-             * BUG: duplicates are ignored since no file is created
-             */
-            printf("would rename '%s' -> '%s'\n",
-                    info.filename,
-                    rename_buffer);
+            settings->transform_file(info.filename, rename_buffer);
         }
 
         free(rename_buffer);

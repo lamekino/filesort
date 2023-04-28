@@ -1,7 +1,7 @@
 #include "arguments.h"
 #include "error_handling.h"
 #include "usage.h"
-#include "copy_file.h"
+#include "transform_file.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -66,13 +66,13 @@ static int handle_flag(int index,
         settings->suffix = argv[index + 1];
     } break;
     case FLAG_CONFIRMATION: {
-        settings->use_confirm = 1;
+        settings->transform_file = &confirm_rename;
     } break;
     case FLAG_COPY_FILES: {
         settings->transform_file = &copy_file;
     } break;
     case FLAG_DRY_RUN: {
-        settings->dry_run = 1;
+        settings->transform_file = &dry_rename;
     } break;
     case FLAG_HELP:
         usage(stdout, argv[0]);
