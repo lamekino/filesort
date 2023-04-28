@@ -28,6 +28,9 @@
             fprintf(stderr, "\n\t-> errno is '%s' (%d)\n", \
                     strerror(errsv), errsv); \
         } \
+        else { \
+            fprintf(stderr, "\n"); \
+        } \
         exit(EXIT_FAILURE); \
     } while (0)
 #endif

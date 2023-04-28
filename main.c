@@ -12,13 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <string.h> /* strrchr */
 #include <limits.h> /* PATH_MAX */
-#include <dirent.h> /* readdir, opendir */
-#include <time.h>   /* time_t */
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 int main(int argc, char *argv[]) {
     struct user_settings settings = {0};
@@ -40,6 +34,10 @@ int main(int argc, char *argv[]) {
     );
 
     number_of_files = read_args(&files_to_process, &settings, argc, argv);
+
+    EXIT_WHEN(number_of_files == 0,
+        "no files provided! doing nothing..."
+    );
 
     for (idx = 0; idx < number_of_files; idx++) {
         size_t new_filename_len = 0;
