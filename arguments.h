@@ -18,7 +18,7 @@
     X(FLAG_DIR_AS_FILE, 'F', \
         "[WIP] treat arguments as individual files" ) \
     X(FLAG_COPY_FILES, 'c', \
-        "[WIP] copies files instead of renaming them") \
+        "copies files instead of renaming them") \
 
 enum program_arguements {
     #define ENUMERATE(a, b, _) a = b,
