@@ -63,8 +63,8 @@ static void possible_filename(char *buffer,
                               const size_t max_len,
                               const rename_mask_t properties,
                               const file_info_t *info) {
-    size_t offset = 0;
     const struct user_settings *settings = info->user_settings;
+    size_t offset = 0;
     /*
      * Do the pre- timestamp parts
      */
@@ -97,21 +97,14 @@ static void possible_filename(char *buffer,
 
 static void get_new_filename(char *buffer,
                              const size_t max_len,
-                             file_info_t *info,
-                             const struct stat *stat) {
+                             file_info_t *info) {
     const struct user_settings *settings = info->user_settings;
     rename_mask_t properties = 0;
     int file_exists = 0;
 
-    info->creation_time = stat->st_ctime;
-    info->extension = strrchr(info->filename, '.');
-
-   SET_BIT(IDX_HAS_EXTENSION, properties,
-       info->extension != NULL);
-   SET_BIT(IDX_HAS_PREFIX, properties,
-       settings->prefix != NULL);
-   SET_BIT(IDX_HAS_SUFFIX, properties,
-       settings->suffix != NULL);
+   SET_BIT(IDX_HAS_EXTENSION, properties, info->extension != NULL);
+   SET_BIT(IDX_HAS_PREFIX, properties, settings->prefix != NULL);
+   SET_BIT(IDX_HAS_SUFFIX, properties, settings->suffix != NULL);
 
     while (file_exists || info->num_duplicates == 0) {
         SET_BIT(IDX_HAS_DUPLICATE, properties,
@@ -123,9 +116,19 @@ static void get_new_filename(char *buffer,
     }
 }
 
-/*
- * TODO: refactor this into smaller parts
- */
+/* TODO: make error handling happen */
+static int rename_wrapper(const struct user_settings *settings,
+                          const char *src,
+                          const char *dest) {
+    if (settings->transform_file == NULL) {
+        printf("renaming '%s' -> '%s'\n", src, dest);
+        return rename(src, dest);
+    }
+    else {
+        return settings->transform_file(src, dest);
+    }
+}
+
 void process_directory(const struct user_settings *settings,
                        DIR *dir,
                        size_t max_fname_len) {
@@ -134,6 +137,7 @@ void process_directory(const struct user_settings *settings,
 
     while ((dir_entry = readdir(dir))) {
         char *rename_buffer = NULL;
+        int rename_status = 0;
         struct stat stat_info;
         /* skip hidden files, parent, current */
         if (dir_entry->d_name[0] == '.') {
@@ -154,25 +158,12 @@ void process_directory(const struct user_settings *settings,
         EXIT_WHEN(rename_buffer == NULL,
            "could not allocate memory for filename."
         );
+        info.creation_time = stat_info.st_ctime;
+        info.extension = strrchr(info.filename, '.');
 
-        get_new_filename(rename_buffer, max_fname_len, &info, &stat_info);
 
-        if (settings->transform_file == NULL) {
-            printf("renaming '%s' -> '%s'\n",
-                info.filename,
-                rename_buffer);
-            /*
-             * FIXME: memory leak if this fails
-             */
-            EXIT_WHEN(
-                rename(info.filename, rename_buffer) != 0,
-                "could not rename file: %s", info.filename
-            );
-        }
-        else {
-            settings->transform_file(info.filename, rename_buffer);
-        }
-
+        get_new_filename(rename_buffer, max_fname_len, &info);
+        rename_wrapper(settings, info.filename, rename_buffer);
         free(rename_buffer);
     }
 }
