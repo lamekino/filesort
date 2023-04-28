@@ -52,6 +52,9 @@ static int copy_file_internal(const char* src, const char* dest)
     fstat(input, &fileinfo);
     int result = sendfile(output, input, &bytesCopied, fileinfo.st_size);
 #else
+    /*
+     * platform not supported...
+     */
     errno = ENOSUP;
     return -1;
 #endif
@@ -63,7 +66,7 @@ static int copy_file_internal(const char* src, const char* dest)
 }
 
 int copy_file(const char *src, const char *dest) {
-    printf("copying '%s' -> '%s'", src, dest);
+    printf("copying '%s' -> '%s'\n", src, dest);
     return copy_file_internal(src, dest);
 }
 

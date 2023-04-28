@@ -163,7 +163,11 @@ void process_directory(const struct user_settings *settings,
 
 
         get_new_filename(rename_buffer, max_fname_len, &info);
-        rename_wrapper(settings, info.filename, rename_buffer);
+        rename_status = rename_wrapper(settings, info.filename, rename_buffer);
         free(rename_buffer);
+
+        EXIT_WHEN(rename_status < 0,
+            "failed to rename '%s'", info.filename
+        );
     }
 }
