@@ -19,9 +19,6 @@
         "[WIP] treat arguments as individual files" ) \
     X(FLAG_COPY_FILES, 'c', \
         "[WIP] copies files instead of renaming them") \
-    X(FLAG_COPY_INTO_DIR, 'C', \
-        "[WIP] instead of renaming files, make a copy with the new name, " \
-        "outputs to specified directory")
 
 enum program_arguements {
     #define ENUMERATE(a, b, _) a = b,
@@ -39,7 +36,6 @@ struct user_settings {
     int dry_run:1;
 
     int (*transform_file)(const char*, const char*);
-    char *copy_dir;
 };
 
 int read_args(char ***file_list,

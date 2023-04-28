@@ -71,13 +71,6 @@ static int handle_flag(int index,
     case FLAG_COPY_FILES: {
         settings->transform_file = &copy_file;
     } break;
-    case FLAG_COPY_INTO_DIR: {
-        args_parsed =
-            ensure_args(FLAG_FILENAME_SUFFIX, "string", 1, argc, index);
-
-        settings->copy_dir = argv[index + 1];
-        settings->transform_file = &copy_file;
-    } break;
     case FLAG_DRY_RUN: {
         settings->dry_run = 1;
     } break;
