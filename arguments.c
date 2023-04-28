@@ -1,6 +1,7 @@
 #include "arguments.h"
 #include "error_handling.h"
 #include "usage.h"
+#include "copy_file.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,14 +69,14 @@ static int handle_flag(int index,
         settings->use_confirm = 1;
     } break;
     case FLAG_COPY_FILES: {
-        settings->use_copy = 1;
+        settings->transform_file = &copy_file;
     } break;
     case FLAG_COPY_INTO_DIR: {
         args_parsed =
             ensure_args(FLAG_FILENAME_SUFFIX, "string", 1, argc, index);
 
         settings->copy_dir = argv[index + 1];
-        settings->use_copy = 1;
+        settings->transform_file = &copy_file;
     } break;
     case FLAG_DRY_RUN: {
         settings->dry_run = 1;

@@ -38,7 +38,7 @@ struct user_settings {
     int use_confirm:1;
     int dry_run:1;
 
-    int use_copy:1;
+    int (*transform_file)(const char*, const char*);
     char *copy_dir;
 };
 

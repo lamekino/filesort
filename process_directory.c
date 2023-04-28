@@ -1,13 +1,14 @@
-#include <stdarg.h>
 #define _XOPEN_SOURCE 500
 #define _POSIX_C_SOURCE 200809L
 
 #include "arguments.h"
 #include "process_directory.h"
 #include "error_handling.h"
+#include "copy_file.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <string.h>
 #include <dirent.h>
@@ -185,10 +186,15 @@ void process_directory(const struct user_settings *settings,
             /*
              * FIXME: memory leak if this fails
              */
-            EXIT_WHEN(
-                rename(info.filename, rename_buffer) != 0,
-                "could not rename file: %s", info.filename
-            );
+            if (settings->transform_file == NULL) {
+                EXIT_WHEN(
+                    rename(info.filename, rename_buffer) != 0,
+                    "could not rename file: %s", info.filename
+                );
+            }
+            else {
+                settings->transform_file(info.filename, rename_buffer);
+            }
         }
         else {
             /*
