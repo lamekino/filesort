@@ -1,5 +1,5 @@
-#ifndef __CLI_H
-#define __CLI_H
+#ifndef __ARGUMENTS_H
+#define __ARGUMENTS_H
 #include <stdio.h>
 
 #define ARGUMENT_XMAP(X) \
@@ -28,6 +28,7 @@ enum program_arguements {
     #undef ENUMERATE
 };
 
+/* TODO: move this to its own file */
 struct user_settings {
     size_t num_threads;
 
