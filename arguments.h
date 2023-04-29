@@ -17,11 +17,13 @@
         "confirm each file change" ) \
     X(FLAG_DIR_AS_FILE, 'F', \
         "[WIP] treat arguments as individual files" ) \
+    X(FLAG_RECURSIVE, 'R', \
+        "[WIP] be recursive - go into directories" ) \
     X(FLAG_COPY_FILES, 'c', \
         "copies files instead of renaming them") \
 
 enum program_arguements {
-    #define ENUMERATE(a, b, _) a = b,
+    #define ENUMERATE(label, flag, _) label = flag,
         ARGUMENT_XMAP(ENUMERATE)
     #undef ENUMERATE
 };

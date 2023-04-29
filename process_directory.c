@@ -22,14 +22,14 @@
     X(HAS_SUFFIX, 3)
 
 enum rename_properties {
-    #define ENUMERATE(a, b) a = 1 << b,
+    #define ENUMERATE(label, shift_level) label = 1 << shift_level,
         MASK_XMAP(ENUMERATE)
     #undef ENUMERATE
 };
 
 enum mask_shift_level {
     /* IDX_HAS_EXTENSION = 0, ... */
-    #define ENUMERATE(a, b) IDX_##a = b,
+    #define ENUMERATE(label, index) IDX_##label = index,
         MASK_XMAP(ENUMERATE)
     #undef ENUMERATE
 };
@@ -49,8 +49,7 @@ typedef struct {
 static int append(char *buffer,
                   const size_t current_len,
                   const size_t max_len,
-                  const char *fmt,
-                  ...) {
+                  const char *fmt, ...) {
     size_t new_len;
     va_list ap;
     va_start(ap, fmt);
@@ -59,7 +58,7 @@ static int append(char *buffer,
     return new_len;
 }
 
-static void possible_filename(char *buffer,
+static void get_possible_filename(char *buffer,
                               const size_t max_len,
                               const rename_mask_t properties,
                               const file_info_t *info) {
@@ -107,10 +106,9 @@ static void get_new_filename(char *buffer,
    SET_BIT(IDX_HAS_SUFFIX, properties, settings->suffix != NULL);
 
     while (file_exists || info->num_duplicates == 0) {
-        SET_BIT(IDX_HAS_DUPLICATE, properties,
-            info->num_duplicates > 0);
-        possible_filename(buffer, max_len, properties, info);
+        SET_BIT(IDX_HAS_DUPLICATE, properties, info->num_duplicates > 0);
 
+        get_possible_filename(buffer, max_len, properties, info);
         file_exists = access(buffer, F_OK) == 0;
         info->num_duplicates += 1;
     }
@@ -124,9 +122,8 @@ static int rename_wrapper(const struct user_settings *settings,
         printf("renaming '%s' -> '%s'\n", src, dest);
         return rename(src, dest);
     }
-    else {
-        return settings->transform_file(src, dest);
-    }
+
+    return settings->transform_file(src, dest);
 }
 
 void process_directory(const struct user_settings *settings,
@@ -144,23 +141,29 @@ void process_directory(const struct user_settings *settings,
             continue;
         }
 
-        /* set the known info about a file */
-        info = (file_info_t) {
-            .user_settings = settings,
-            .filename = dir_entry->d_name,
-        };
-
         EXIT_WHEN(stat(info.filename, &stat_info) < 0,
-           "could not stat file '%s'", info.filename
+           "could not stat file '%s'", dir_entry->d_name
         );
+
+        /* check if file is directory */
+        /* TODO: -R, recurse into directory */
+        if (stat_info.st_mode & S_IFDIR) {
+            fprintf(stderr, "skipping directory '%s'\n", dir_entry->d_name);
+            continue;
+        }
 
         rename_buffer = malloc(max_fname_len);
         EXIT_WHEN(rename_buffer == NULL,
            "could not allocate memory for filename."
         );
-        info.creation_time = stat_info.st_ctime;
-        info.extension = strrchr(info.filename, '.');
 
+        /* set the known info about a file */
+        info = (file_info_t) {
+            .user_settings = settings,
+            .filename = dir_entry->d_name,
+            .creation_time = stat_info.st_ctime,
+            .extension = strrchr(info.filename, '.')
+        };
 
         get_new_filename(rename_buffer, max_fname_len, &info);
         rename_status = rename_wrapper(settings, info.filename, rename_buffer);

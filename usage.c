@@ -8,7 +8,7 @@ void usage(FILE *stream, const char *progname) {
     fprintf(stream,"%s [flags] <dir 1> <dir 2> <dir3> ...\n", progname);
 
     /* prints out the list of predefined arguments */
-    #define PRINT(_, b, c) fprintf(stream, "    -%c    %s\n", b, c);
+    #define PRINT(_, flag, desc) fprintf(stream, "    -%c    %s\n", flag, desc);
         ARGUMENT_XMAP(PRINT)
     #undef PRINT
 }
