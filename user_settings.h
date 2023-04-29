@@ -11,7 +11,7 @@ struct user_settings {
     char *suffix;
 
     int use_confirm:1;
-    int dry_run:1;
+    int use_recursion:1;
 
     int (*transform_file)(const char*, const char*);
 };
