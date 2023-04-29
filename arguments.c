@@ -2,6 +2,7 @@
 #include "error_handling.h"
 #include "usage.h"
 #include "transform_file.h"
+#include "user_settings.h"
 
 #include <stdio.h>
 #include <stdlib.h>

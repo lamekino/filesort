@@ -1,6 +1,7 @@
 #ifndef __ARGUMENTS_H
 #define __ARGUMENTS_H
 #include <stdio.h>
+#include "user_settings.h"
 
 #define ARGUMENT_XMAP(X) \
     X(FLAG_HELP, 'h', \
@@ -27,20 +28,6 @@ enum program_arguements {
         ARGUMENT_XMAP(ENUMERATE)
     #undef ENUMERATE
 };
-
-/* TODO: move this to its own file */
-struct user_settings {
-    size_t num_threads;
-
-    char *prefix;
-    char *suffix;
-
-    int use_confirm:1;
-    int dry_run:1;
-
-    int (*transform_file)(const char*, const char*);
-};
-
 int read_args(char ***file_list,
               struct user_settings *settings,
               int argc,
