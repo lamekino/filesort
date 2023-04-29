@@ -75,6 +75,9 @@ static int handle_flag(int index,
     case FLAG_DRY_RUN: {
         settings->transform_file = &dry_rename;
     } break;
+    case FLAG_RECURSIVE: {
+        settings->use_recursion = 1;
+    } break;
     case FLAG_HELP:
         usage(stdout, argv[0]);
         exit(EXIT_SUCCESS);

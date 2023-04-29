@@ -3,6 +3,7 @@
 
 #include "error_handling.h"
 #include "process_file.h"
+#include "process_directory.h"
 #include "user_settings.h"
 #include "arguments.h"
 
@@ -129,10 +130,14 @@ int process_file(const struct user_settings *settings,
     );
 
     /* check if file is directory */
-    /* TODO: -R, recurse into directory */
     if (stat_info.st_mode & S_IFDIR) {
-        fprintf(stderr, "skipping directory '%s'\n", filename);
-        return 1;
+        if (!settings->use_recursion) {
+            fprintf(stderr, "skipping directory '%s'\n", filename);
+            return 1;
+        }
+
+        /* TODO: implement recursion using process_directory() */
+        UNIMPLEMENTED;
     }
 
     /* set the known info about a file */

@@ -40,6 +40,9 @@ int main(int argc, char *argv[]) {
         "no files provided! doing nothing..."
     );
 
+    /* TODO: move the process of opening directories to its own function */
+    /* NOTE: using recursion, the last directory will need to be restored,
+     * that infomation is lost in calling process_directory() */
     for (idx = 0; idx < number_of_files; idx++) {
         size_t new_filename_len = 0;
         DIR *dir = NULL;
