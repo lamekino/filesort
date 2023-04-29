@@ -16,12 +16,14 @@ endif
 
 
 SRC = \
+	process_file.c \
 	transform_file.c \
 	usage.c \
 	process_directory.c \
 	arguments.c
 
 HEADERS = \
+	user_settings.h \
 	error_handling.h \
 	$(SRC:.c=.h)
 

@@ -7,6 +7,7 @@
 #include "arguments.h"
 #include "process_directory.h"
 #include "error_handling.h"
+#include "user_settings.h"
 #include "usage.h"
 
 #include <stdio.h>
