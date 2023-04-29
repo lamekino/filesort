@@ -114,7 +114,6 @@ static void get_new_filename(char *buffer,
     }
 }
 
-/* TODO: make error handling happen */
 static int rename_wrapper(const struct user_settings *settings,
                           const char *src,
                           const char *dest) {
