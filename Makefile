@@ -1,9 +1,18 @@
 PROG_NAME = filesort
 
+ifeq ($(PREFIX),)
+	PREFIX := /usr/local
+endif
+
 CC = gcc
-CCFLAGS = \
-	-std=c89 -ansi -ggdb -Wall -Wextra -Werror -Wno-unused-variable \
-	-Wno-unused-parameter -Wno-unused-but-set-variable
+ifeq ($(DEBUG),1)
+	CCFLAGS = \
+		-std=c89 -ansi -ggdb -Wall -Wextra -Werror -Wno-unused-variable \
+		-Wno-unused-parameter -Wno-unused-but-set-variable
+else
+	CCFLAGS = \
+		-std=c89 -ansi -Wall -Wextra -Werror -O3
+endif
 
 
 SRC = \
@@ -25,6 +34,9 @@ all: $(PROG_NAME)
 clean:
 	rm *.o *$(PROG_NAME)
 
+install: all
+	install -m 0755 $(PROG_NAME) $(PREFIX)/bin
+
 $(PROG_NAME): $(OBJ)
 	$(CC) -o $@ $^
 
@@ -33,4 +45,4 @@ $(PROG_NAME): $(OBJ)
 
 main.o: main.c $(SRC) $(HEADERS)
 
-.PHONY: all clean
+.PHONY: all clean install

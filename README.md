@@ -3,8 +3,8 @@ FileSort
 
 A C utility to bulk rename files.
 
-## Running
+## Building
 ```sh
 $ make
-$ ./filesort <dir1> <dir2> ...
+$ sudo make install
 ```
