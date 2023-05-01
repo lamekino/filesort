@@ -94,9 +94,10 @@ int read_args(char ***file_list,
               struct user_settings *settings,
               int argc,
               char *argv[]) {
-    int idx = 0, number_of_files = 0;
+    int idx = 1; /* skip argv[0] */
+    int number_of_files = 0;
 
-   while (idx < argc) {
+    while (idx < argc) {
         if (argv[idx][0] == '-') {
             idx += handle_flag(idx, argc, argv, settings);
             continue;
@@ -107,9 +108,9 @@ int read_args(char ***file_list,
             "could not resize file list"
         );
 
-        (*file_list)[number_of_files - 1] = argv[idx];
 
-        number_of_files++;
+        (*file_list)[++number_of_files - 1] = argv[idx];
+
         idx++;
     }
 
