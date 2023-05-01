@@ -16,6 +16,7 @@ endif
 
 
 SRC = \
+	init_dir.c \
 	process_file.c \
 	transform_file.c \
 	usage.c \

@@ -4,6 +4,7 @@
 #include "error_handling.h"
 #include "process_file.h"
 #include "process_directory.h"
+#include "init_dir.h"
 #include "user_settings.h"
 #include "arguments.h"
 
@@ -131,13 +132,20 @@ int process_file(const struct user_settings *settings,
 
     /* check if file is directory */
     if (stat_info.st_mode & S_IFDIR) {
-        if (!settings->use_recursion) {
-            fprintf(stderr, "skipping directory '%s'\n", filename);
+        if (settings->use_recursion) {
+            DIR *next_dir = NULL;
+            int len = init_dir(filename, &next_dir);
+
+            /* this is indirect recursion! */
+            process_directory(settings, next_dir, len);
+            closedir(next_dir);
+
+            /* FIXME: this doesn't account for symbolic links */
+            chdir("..");
             return 1;
         }
-
-        /* TODO: implement recursion using process_directory() */
-        UNIMPLEMENTED;
+        fprintf(stderr, "skipping directory '%s'\n", filename);
+        return 1;
     }
 
     /* set the known info about a file */
