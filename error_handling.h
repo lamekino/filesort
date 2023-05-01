@@ -11,8 +11,8 @@
     } while (0)
 
 #define UNIMPLEMENTED do { \
-        fprintf(stderr, "%s[%d]: '%s()' not implemented, exiting\n", \
-                __FILE__, __LINE__, __FUNCTION__); \
+        fprintf(stderr, "%s: '%s()', line %d not implemented, exiting\n", \
+                __FILE__, __FUNCTION__, __LINE__); \
         exit(EXIT_FAILURE); \
     } while (0)
 
