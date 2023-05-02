@@ -43,7 +43,14 @@ static int append(char *buffer,
     size_t new_len;
     va_list ap;
     va_start(ap, fmt);
-    new_len = vsnprintf(buffer + current_len, max_len - current_len, fmt, ap);
+
+    /* these new values represent the current position in the buffer and the
+     * new max length given from the current amount written to the buffer */
+    char *buf_pos = buffer + current_len;
+    size_t delta_len = max_len - current_len;
+
+    new_len = vsnprintf(buf_pos, delta_len, fmt, ap);
+
     va_end(ap);
     return new_len;
 }
@@ -131,6 +138,7 @@ static int recurse_directory(const struct user_settings *settings,
         return 0;
     }
 
+    /* don't use recursion, skip file */
     if (!settings->use_recursion) {
         fprintf(stderr, "skipping directory '%s'\n", filename);
         return 0;
@@ -154,14 +162,15 @@ int process_file(const struct user_settings *settings,
                  const char *filename,
                  const size_t len) {
     file_info_t info;
+    struct stat stat_info;
     char *rename_buffer = NULL;
     int rename_status = 0;
-    struct stat stat_info;
 
     EXIT_WHEN(stat(filename, &stat_info) < 0,
        "could not stat file '%s'", filename
     );
 
+    /* if using recursion, don't rename the directory but process the files */
     if (recurse_directory(settings, filename, stat_info)) {
         return 1;
     }
