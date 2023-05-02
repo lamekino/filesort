@@ -6,8 +6,6 @@ endif
 
 CC = gcc
 
-DEFINES =
-
 ifeq ($(DEBUG),1)
 	CCFLAGS = \
 		-std=c89 -ansi -ggdb -Wall -Wextra -Werror -Wno-unused-variable \
