@@ -10,7 +10,7 @@ ifeq ($(DEBUG),1)
 	CCFLAGS = \
 		-std=c89 -ansi -ggdb -Wall -Wextra -Werror -Wno-unused-variable \
 		-Wno-unused-parameter -Wno-unused-but-set-variable \
-		-D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=500
+		-D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=500 -DDEBUG=1
 else
 	CCFLAGS = \
 		-std=c89 -ansi -Wall -Wextra -Werror -O3 \
