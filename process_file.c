@@ -118,6 +118,36 @@ static int rename_wrapper(const struct user_settings *settings,
     return settings->transform_file(src, dest);
 }
 
+static int recurse_directory(const struct user_settings *settings,
+                             const char *filename,
+                             const struct stat stat_info) {
+    DIR *next_dir = NULL;
+    int len = 0;
+
+    /* not a directory -- do nothing */
+    if (!(stat_info.st_mode & S_IFDIR)) {
+        return 0;
+    }
+
+    if (!settings->use_recursion) {
+        fprintf(stderr, "skipping directory '%s'\n", filename);
+        return 0;
+    }
+
+    /* the file is a direcatory and recursion is enabled */
+    len = init_dir(filename, &next_dir);
+
+    /* this is indirect recursion! */
+    process_directory(settings, next_dir, len);
+    closedir(next_dir);
+
+    /* NOTE: S_IFDIR and IS_ISLNK are mutually exclusive, this will always be
+     * parent */
+    chdir("..");
+
+    return 1;
+}
+
 int process_file(const struct user_settings *settings,
                  const char *filename,
                  const size_t len) {
@@ -130,21 +160,7 @@ int process_file(const struct user_settings *settings,
        "could not stat file '%s'", filename
     );
 
-    /* check if file is directory */
-    if (stat_info.st_mode & S_IFDIR) {
-        if (settings->use_recursion) {
-            DIR *next_dir = NULL;
-            int len = init_dir(filename, &next_dir);
-
-            /* this is indirect recursion! */
-            process_directory(settings, next_dir, len);
-            closedir(next_dir);
-
-            /* FIXME: this doesn't account for symbolic links */
-            chdir("..");
-            return 1;
-        }
-        fprintf(stderr, "skipping directory '%s'\n", filename);
+    if (recurse_directory(settings, filename, stat_info)) {
         return 1;
     }
 
