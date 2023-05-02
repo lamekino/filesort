@@ -51,10 +51,10 @@ static int append(char *buffer,
     return new_len;
 }
 
-static void get_possible_filename(char *buffer,
-                              const size_t max_len,
-                              const rename_mask_t properties,
-                              const file_info_t *info) {
+static size_t get_possible_filename(char *buffer,
+                                    const size_t max_len,
+                                    const rename_mask_t properties,
+                                    const file_info_t *info) {
     const struct user_settings *settings = info->user_settings;
     size_t offset = 0;
     /*
@@ -85,14 +85,17 @@ static void get_possible_filename(char *buffer,
         offset += append(buffer, offset, max_len,
                 "%s", settings->suffix);
     }
+
+    return offset;
 }
 
-static void get_new_filename(char *buffer,
-                             const size_t max_len,
-                             file_info_t *info) {
+static size_t get_new_filename(char *buffer,
+                               const size_t max_len,
+                               file_info_t *info) {
     const struct user_settings *settings = info->user_settings;
     rename_mask_t properties = 0;
     int file_exists = 0;
+    size_t name_len = 0;
 
    SET_BIT(IDX_HAS_EXTENSION, properties, info->extension != NULL);
    SET_BIT(IDX_HAS_PREFIX, properties, settings->prefix != NULL);
@@ -101,10 +104,12 @@ static void get_new_filename(char *buffer,
     while (file_exists || info->num_duplicates == 0) {
         SET_BIT(IDX_HAS_DUPLICATE, properties, info->num_duplicates > 0);
 
-        get_possible_filename(buffer, max_len, properties, info);
+        name_len = get_possible_filename(buffer, max_len, properties, info);
         file_exists = access(buffer, F_OK) == 0;
         info->num_duplicates += 1;
     }
+
+    return name_len;
 }
 
 static int rename_wrapper(const struct user_settings *settings,
