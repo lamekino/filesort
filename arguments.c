@@ -103,13 +103,12 @@ int read_args(char ***file_list,
             continue;
         }
 
-        *file_list = realloc(*file_list, sizeof(char*) * number_of_files);
+        number_of_files++;
+        *file_list = realloc(*file_list, sizeof(*file_list) * number_of_files);
         EXIT_WHEN(*file_list == NULL,
             "could not resize file list"
         );
-
-
-        (*file_list)[++number_of_files - 1] = argv[idx];
+        (*file_list)[number_of_files - 1] = argv[idx];
 
         idx++;
     }
