@@ -22,7 +22,6 @@ int main(int argc, char *argv[]) {
 
     if (argc < 2) {
         fprintf(stderr, "%s requires at least one argument\n", argv[0]);
-        usage(stderr, argv[0]);
         return EXIT_FAILURE;
     }
 
