@@ -1,5 +1,5 @@
-#define _XOPEN_SOURCE 500
-#define _POSIX_C_SOURCE 200809L
+/* TODO: make this a sensible number */
+#define FNAME_MIN 32
 
 #include "arguments.h"
 #include "process_directory.h"
@@ -39,6 +39,9 @@ int main(int argc, char *argv[]) {
     for (idx = 0; idx < number_of_files; idx++) {
         DIR *dir = NULL;
         int new_filename_len = init_dir(files_to_process[idx], &dir);
+        EXIT_WHEN(new_filename_len < FNAME_MIN,
+            "path '%s' too long to rename file", files_to_process[idx]
+        );
 
         process_directory(&settings, dir, new_filename_len);
         closedir(dir);

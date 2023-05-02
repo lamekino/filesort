@@ -1,6 +1,3 @@
-#define _XOPEN_SOURCE 500
-#define _POSIX_C_SOURCE 200809L
-
 #include "process_directory.h"
 #include "error_handling.h"
 #include "arguments.h"

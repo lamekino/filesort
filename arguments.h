@@ -28,6 +28,7 @@ enum program_arguements {
         ARGUMENT_XMAP(ENUMERATE)
     #undef ENUMERATE
 };
+
 int read_args(char ***file_list,
               struct user_settings *settings,
               int argc,
