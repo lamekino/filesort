@@ -40,7 +40,7 @@ static int append(char *buffer,
                   const size_t current_len,
                   const size_t max_len,
                   const char *fmt, ...) {
-    size_t new_len;
+    size_t chars_written;
     va_list ap;
     va_start(ap, fmt);
 
@@ -49,10 +49,10 @@ static int append(char *buffer,
     char *buf_pos = buffer + current_len;
     size_t delta_len = max_len - current_len;
 
-    new_len = vsnprintf(buf_pos, delta_len, fmt, ap);
+    chars_written = vsnprintf(buf_pos, delta_len, fmt, ap);
 
     va_end(ap);
-    return new_len;
+    return chars_written;
 }
 
 static size_t get_possible_filename(char *buffer,
@@ -99,18 +99,20 @@ static size_t get_new_filename(char *buffer,
     const struct user_settings *settings = info->user_settings;
     rename_mask_t properties = 0;
     int file_exists = 0;
+    int num_duplicates = 0;
     size_t name_len = 0;
 
    SET_BIT(IDX_HAS_EXTENSION, properties, info->extension != NULL);
    SET_BIT(IDX_HAS_PREFIX, properties, settings->prefix != NULL);
    SET_BIT(IDX_HAS_SUFFIX, properties, settings->suffix != NULL);
 
-    while (file_exists || info->num_duplicates == 0) {
+    while (file_exists || num_duplicates == 0) {
+        info->num_duplicates = num_duplicates;
         SET_BIT(IDX_HAS_DUPLICATE, properties, info->num_duplicates > 0);
 
         name_len = get_possible_filename(buffer, max_len, properties, info);
         file_exists = access(buffer, F_OK) == 0;
-        info->num_duplicates += 1;
+        num_duplicates += 1;
     }
 
     return name_len;
