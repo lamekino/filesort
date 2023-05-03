@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 
-/* TODO: move this to its own file */
 struct user_settings {
     size_t num_threads;
 
