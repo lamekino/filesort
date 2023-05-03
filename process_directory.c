@@ -23,8 +23,8 @@ void process_directory(const struct user_settings *settings,
         /* TODO: don't use max size for alloc, do something more sensible */
         status = process_file(settings, dir_entry->d_name, max_fname_len);
 
-        EXIT_WHEN(status < 0,
-            "failed to rename '%s'", dir_entry->d_name
-        );
+        if (status < 0) {
+            fprintf(stderr, "failed to rename '%s'\n", dir_entry->d_name);
+        }
     }
 }
