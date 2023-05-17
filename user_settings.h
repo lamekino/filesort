@@ -9,8 +9,8 @@ struct user_settings {
     char *prefix;
     char *suffix;
 
-    int use_confirm:1;
-    int use_recursion:1;
+    unsigned int use_confirm:1;
+    unsigned int use_recursion:1;
 
     int (*transform_file)(const char*, const char*);
 };

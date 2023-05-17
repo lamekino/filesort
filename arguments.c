@@ -9,10 +9,8 @@
 
 #define MIN_THREADS 1u
 
-typedef char flag_t;
-
 /* returns the amount of args process + the flag itself */
-static int ensure_args(flag_t flag, const char *type, int num_needed,
+static int ensure_args(const char flag, const char *type, int num_needed,
         int total, int pos) {
     EXIT_WHEN(num_needed + pos > total,
         "-%c requires %d %s arguments but was given %d",
@@ -94,24 +92,40 @@ int read_args(char ***file_list,
               struct user_settings *settings,
               int argc,
               char *argv[]) {
-    int idx = 1; /* skip argv[0] */
+    int adx;
     int number_of_files = 0;
 
-    while (idx < argc) {
-        if (argv[idx][0] == '-') {
-            idx += handle_flag(idx, argc, argv, settings);
+    for (adx = 1; adx < argc; adx++) {
+        char **file_list_resize = NULL;
+
+        if (argv[adx][0] == '-') {
+            adx += handle_flag(adx, argc, argv, settings);
             continue;
         }
 
         number_of_files++;
-        *file_list = realloc(*file_list, sizeof(*file_list) * number_of_files);
-        EXIT_WHEN(*file_list == NULL,
-            "could not resize file list"
-        );
-        (*file_list)[number_of_files - 1] = argv[idx];
+        file_list_resize = realloc(*file_list, sizeof(*file_list) * number_of_files);
+        if (file_list_resize == NULL) {
+            goto MEMORY_ERROR;
+        }
 
-        idx++;
+        /* set the value of the resized list and make the original pointer point
+         * to it */
+        file_list_resize[number_of_files - 1] = argv[adx];
+        *file_list = file_list_resize;
     }
 
     return number_of_files;
+
+/*
+ * NOTE: in defense of using a goto:
+ * 1) this function allocates the memory, it shouldn't be the caller's responsiblity to in an error
+ * 2) it reduces the complexity of the code if we were to just return -1
+ */
+MEMORY_ERROR:
+    if (*file_list != NULL) {
+        free(*file_list);
+    }
+
+    return -1;
 }
