@@ -6,8 +6,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+/* NOTE: placeholders */
 #define MIN_THREADS 1u
+#define MAX_THREADS 32u
 
 /* returns the amount of args process + the flag itself */
 static int ensure_args(int num_needed, int total, int pos) {
@@ -51,28 +54,31 @@ static int handle_flag(int index,
                        int argc,
                        char *argv[],
                        struct user_settings *settings) {
-    const char *flag = argv[index];
     int args_parsed = 1;
-    void *field_to_set = NULL;
 
-    switch (flag[1]) {
+    char **string_to_set = NULL;
+
+    size_t *number_to_set = NULL;
+    int min_set_num, max_set_num;
+
+    switch (argv[index][1]) {
     case FLAG_THREAD_NUM: {
 #if 0
-        args_parsed =
-            ensure_args(FLAG_THREAD_NUM, "number", 1, argc, index);
+        args_parsed = ensure_args(1, argc, index);
 
-        settings->num_threads =
-            verify_number(argv[index + 1], "thread", 1, -1);
+        min_set_num = MIN_THREADS;
+        max_set_num = MAX_THREADS;
+        number_to_set = &(settings->num_threads);
 #endif
         UNIMPLEMENTED;
     } break;
     case FLAG_FILENAME_PREFIX: {
         args_parsed = ensure_args(1, argc, index);
-        field_to_set = &(settings->prefix);
+        string_to_set = &(settings->prefix);
     } break;
     case FLAG_FILENAME_SUFFIX: {
         args_parsed = ensure_args(1, argc, index);
-        field_to_set = &(settings->suffix);
+        string_to_set = &(settings->suffix);
     } break;
     case FLAG_CONFIRMATION: {
         settings->transform_file = &confirm_rename;
@@ -90,13 +96,17 @@ static int handle_flag(int index,
         usage(stdout, argv[0]);
         exit(EXIT_SUCCESS);
     default:
-        fprintf(stderr, "Unknown flag: '%s'\n", flag);
+        fprintf(stderr, "Unknown flag: '%s'\n", argv[index]);
         usage(stderr, argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    if (field_to_set != NULL && args_parsed > 1) {
-        field_to_set = argv[index + 1];
+    if (string_to_set != NULL && args_parsed > 1) {
+        *string_to_set = argv[index + 1];
+    }
+
+    if (number_to_set != NULL && args_parsed > 1) {
+        UNIMPLEMENTED;
     }
 
     return args_parsed;
