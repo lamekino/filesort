@@ -114,18 +114,15 @@ int read_args(char ***file_list,
 
         if (argv[adx][0] == '-') {
             int args_parsed = handle_flag(adx, argc, argv, settings);
-            if (args_parsed > 0) {
-                adx += args_parsed;
-                continue;
-            }
-            goto FLAG_ERROR;
+
+            if (args_parsed <= 0) goto FLAG_ERROR;
+            adx += args_parsed;
+            continue;
         }
 
         number_of_files++;
         file_list_resize = realloc(*file_list, sizeof(*file_list) * number_of_files);
-        if (file_list_resize == NULL) {
-            goto MEMORY_ERROR;
-        }
+        if (file_list_resize == NULL) goto MEMORY_ERROR;
 
         /* set the value of the resized list and make the original pointer point
          * to it */

@@ -31,13 +31,6 @@ int main(int argc, char *argv[]) {
     );
 
     number_of_files = read_args(&files_to_process, &settings, argc, argv);
-    EXIT_WHEN(number_of_files < 0,
-        "error when allocating memory for files"
-    );
-    EXIT_WHEN(number_of_files == 0,
-        "no files provided! i can't do anything!"
-    );
-
     for (idx = 0; idx < number_of_files; idx++) {
         DIR *dir = NULL;
         int new_filename_len = init_dir(files_to_process[idx], &dir);
