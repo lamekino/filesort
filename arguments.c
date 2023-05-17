@@ -10,18 +10,27 @@
 #define MIN_THREADS 1u
 
 /* returns the amount of args process + the flag itself */
-static int ensure_args(const char flag, const char *type, int num_needed,
-        int total, int pos) {
+static int ensure_args(int num_needed, int total, int pos) {
+    if (num_needed + pos >= total) {
+        return -1;
+    }
+#if 0
     EXIT_WHEN(num_needed + pos > total,
         "-%c requires %d %s arguments but was given %d",
         flag, num_needed, type, total - pos
     );
+#endif
 
     return num_needed + 1;
 }
 
-static int verify_number(char *num, char *purpose, int min, int max) {
+static int verify_number(char *num, int min, int max) {
     int n = atoi(num);
+    if (n == 0) return -1;
+    if (n > -1 && n < min) return -2;
+    if (n > -1 && n > max) return -3;
+
+#if 0
     EXIT_WHEN(n == 0,
         "error parsing number of %s in '%s'", purpose, num
     );
@@ -33,6 +42,7 @@ static int verify_number(char *num, char *purpose, int min, int max) {
         "%d is an invaild number of %s (maximum: %d)",
         n, purpose, max
     );
+#endif
 
     return n;
 }
@@ -43,26 +53,26 @@ static int handle_flag(int index,
                        struct user_settings *settings) {
     const char *flag = argv[index];
     int args_parsed = 1;
+    void *field_to_set = NULL;
 
     switch (flag[1]) {
     case FLAG_THREAD_NUM: {
+#if 0
         args_parsed =
             ensure_args(FLAG_THREAD_NUM, "number", 1, argc, index);
 
         settings->num_threads =
             verify_number(argv[index + 1], "thread", 1, -1);
+#endif
+        UNIMPLEMENTED;
     } break;
     case FLAG_FILENAME_PREFIX: {
-        args_parsed =
-            ensure_args(FLAG_FILENAME_PREFIX, "string", 1, argc, index);
-
-        settings->prefix = argv[index + 1];
+        args_parsed = ensure_args(1, argc, index);
+        field_to_set = &(settings->prefix);
     } break;
     case FLAG_FILENAME_SUFFIX: {
-        args_parsed =
-            ensure_args(FLAG_FILENAME_SUFFIX, "string", 1, argc, index);
-
-        settings->suffix = argv[index + 1];
+        args_parsed = ensure_args(1, argc, index);
+        field_to_set = &(settings->suffix);
     } break;
     case FLAG_CONFIRMATION: {
         settings->transform_file = &confirm_rename;
@@ -85,6 +95,10 @@ static int handle_flag(int index,
         exit(EXIT_FAILURE);
     }
 
+    if (field_to_set != NULL && args_parsed > 1) {
+        field_to_set = argv[index + 1];
+    }
+
     return args_parsed;
 }
 
@@ -92,15 +106,19 @@ int read_args(char ***file_list,
               struct user_settings *settings,
               int argc,
               char *argv[]) {
-    int adx;
+    int adx = 1;
     int number_of_files = 0;
 
-    for (adx = 1; adx < argc; adx++) {
+    while (adx < argc) {
         char **file_list_resize = NULL;
 
         if (argv[adx][0] == '-') {
-            adx += handle_flag(adx, argc, argv, settings);
-            continue;
+            int args_parsed = handle_flag(adx, argc, argv, settings);
+            if (args_parsed > 0) {
+                adx += args_parsed;
+                continue;
+            }
+            goto FLAG_ERROR;
         }
 
         number_of_files++;
@@ -113,6 +131,8 @@ int read_args(char ***file_list,
          * to it */
         file_list_resize[number_of_files - 1] = argv[adx];
         *file_list = file_list_resize;
+
+        adx++;
     }
 
     return number_of_files;
@@ -126,6 +146,14 @@ MEMORY_ERROR:
     if (*file_list != NULL) {
         free(*file_list);
     }
-
-    return -1;
+    EXIT_WHEN(1,
+        "could not allocate memory for files"
+    );
+FLAG_ERROR:
+    if (*file_list != NULL) {
+        free(*file_list);
+    }
+    EXIT_WHEN(1,
+        "invalid argument for flag '%s'", argv[adx]
+    );
 }
