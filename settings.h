@@ -1,9 +1,9 @@
-#ifndef __USER_SETTINGS_H
-#define __USER_SETTINGS_H
+#ifndef __SETTINGS_H
+#define __SETTINGS_H
 
 #include <stdlib.h>
 
-struct user_settings {
+typedef struct settings {
     size_t num_threads;
 
     char *prefix;
@@ -13,5 +13,5 @@ struct user_settings {
     unsigned int use_recursion:1;
 
     int (*transform_file)(const char*, const char*);
-};
+} settings_t;
 #endif

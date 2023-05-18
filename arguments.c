@@ -2,7 +2,7 @@
 #include "error_handling.h"
 #include "usage.h"
 #include "transform_file.h"
-#include "user_settings.h"
+#include "settings.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +33,7 @@ static int verify_number(char *num, int min, int max) {
 static int handle_flag(int index,
                        int argc,
                        char *argv[],
-                       struct user_settings *settings) {
+                       settings_t *settings) {
     int args_parsed = 1;
 
     char **string_to_set = NULL;
@@ -96,7 +96,7 @@ static int handle_flag(int index,
 }
 
 int read_args(char ***file_list,
-              struct user_settings *settings,
+              settings_t *settings,
               int argc,
               char *argv[]) {
     int adx = 1;

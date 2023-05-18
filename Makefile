@@ -26,7 +26,7 @@ SRC = \
 	arguments.c
 
 HEADERS = \
-	user_settings.h \
+	settings.h \
 	error_handling.h \
 	$(SRC:.c=.h)
 

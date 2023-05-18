@@ -4,7 +4,7 @@
 #include "arguments.h"
 #include "process_directory.h"
 #include "error_handling.h"
-#include "user_settings.h"
+#include "settings.h"
 #include "init_dir.h"
 
 #include <stdio.h>
@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <limits.h>
 
-static status_t apply_on_dir(const struct user_settings settings,
+static status_t apply_on_dir(const settings_t settings,
                              const int number_of_files,
                              const char *starting_path,
                              char **file_list) {
@@ -36,7 +36,7 @@ static status_t apply_on_dir(const struct user_settings settings,
 }
 
 int main(int argc, char *argv[]) {
-    struct user_settings settings = {0};
+    settings_t settings = {0};
     char starting_path[PATH_MAX];
     char **files_to_process = NULL;
     int number_of_files = 0;

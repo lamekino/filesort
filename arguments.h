@@ -1,7 +1,7 @@
 #ifndef __ARGUMENTS_H
 #define __ARGUMENTS_H
 #include <stdio.h>
-#include "user_settings.h"
+#include "settings.h"
 
 #define ARGUMENT_XMAP(X) \
     X(FLAG_HELP, 'h', \
@@ -30,7 +30,7 @@ enum program_arguements {
 };
 
 int read_args(char ***file_list,
-              struct user_settings *settings,
+              settings_t *settings,
               int argc,
               char *argv[]);
 #endif

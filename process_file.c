@@ -3,7 +3,7 @@
 #include "error_handling.h"
 #include "process_directory.h"
 #include "init_dir.h"
-#include "user_settings.h"
+#include "settings.h"
 #include "arguments.h"
 
 #include <stdio.h>
@@ -60,7 +60,7 @@ static size_t get_possible_filename(char *buffer,
                                     const size_t max_len,
                                     const rename_mask_t properties,
                                     const file_info_t *info) {
-    const struct user_settings *settings = info->user_settings;
+    const settings_t *settings = info->user_settings;
     size_t offset = 0;
     /*
      * Do the pre- timestamp parts
@@ -97,7 +97,7 @@ static size_t get_possible_filename(char *buffer,
 static size_t get_new_filename(char *buffer,
                                const size_t max_len,
                                file_info_t *info) {
-    const struct user_settings *settings = info->user_settings;
+    const settings_t *settings = info->user_settings;
     rename_mask_t properties = 0;
     int file_exists = 0;
     int num_duplicates = 0;
@@ -119,7 +119,7 @@ static size_t get_new_filename(char *buffer,
     return name_len;
 }
 
-static int rename_wrapper(const struct user_settings *settings,
+static int rename_wrapper(const settings_t *settings,
                           const char *src,
                           const char *dest) {
     if (settings->transform_file == NULL) {
@@ -130,7 +130,7 @@ static int rename_wrapper(const struct user_settings *settings,
     return settings->transform_file(src, dest);
 }
 
-static int recurse_directory(const struct user_settings *settings,
+static int recurse_directory(const settings_t *settings,
                              const char *filename,
                              const struct stat stat_info) {
     DIR *next_dir = NULL;
@@ -162,7 +162,7 @@ static int recurse_directory(const struct user_settings *settings,
     return 1;
 }
 
-status_t process_file(const struct user_settings *settings,
+status_t process_file(const settings_t *settings,
                       const char *filename,
                       const size_t len) {
     file_info_t info;
