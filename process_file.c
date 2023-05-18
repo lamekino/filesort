@@ -170,9 +170,9 @@ status_t process_file(const struct user_settings *settings,
     char *rename_buffer = NULL;
     int rename_gives;
 
-    EXIT_WHEN(stat(filename, &stat_info) < 0,
-       "could not stat file '%s'", filename
-    );
+    if (stat(filename, &stat_info) < 0) {
+        return STATUS_ERR("could not stat file <placeholder>");
+    }
 
     /* if using recursion, don't rename the directory but process the files */
     if (recurse_directory(settings, filename, stat_info)) {
