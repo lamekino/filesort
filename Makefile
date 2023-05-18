@@ -1,4 +1,6 @@
 PROG_NAME = filesort
+OBJ_DIR = ./obj
+SRC_DIR = ./src
 
 ifeq ($(PREFIX),)
 	PREFIX := /usr/local
@@ -17,28 +19,13 @@ else
 		-D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=500
 endif
 
-SRC = \
-	init_dir.c \
-	process_file.c \
-	transform_file.c \
-	usage.c \
-	process_directory.c \
-	arguments.c \
-	apply_changes.c
-
-HEADERS = \
-	settings.h \
-	error_handling.h \
-	$(SRC:.c=.h)
-
-OBJ = \
-	$(SRC:.c=.o) \
-	main.o
+SRC = $(shell find $(SRC_DIR) -name "*.c")
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 
 all: $(PROG_NAME)
 
 clean:
-	rm *.o *$(PROG_NAME)
+	rm -fr $(OBJ_DIR) *$(PROG_NAME)
 
 install: all
 	install -m 0755 $(PROG_NAME) $(PREFIX)/bin
@@ -46,9 +33,8 @@ install: all
 $(PROG_NAME): $(OBJ)
 	$(CC) -o $@ $^
 
-%.o: %.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@) || true
 	$(CC) $(CCFLAGS) -c -o $@ $<
-
-main.o: main.c $(SRC) $(HEADERS)
 
 .PHONY: all clean install
