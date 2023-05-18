@@ -24,8 +24,11 @@ status_t process_directory(const settings_t *settings,
         /* TODO: don't use max size for alloc, do something more sensible */
         status = process_file(settings, dir_entry->d_name, max_fname_len);
 
-        if (HAS_ERROR(status)) {
+        if (HAS_FAILED(status)) {
             fprintf(stderr, "failed to rename '%s'\n", dir_entry->d_name);
+        }
+        if (HAS_ERROR(status)) {
+            break;
         }
     }
 

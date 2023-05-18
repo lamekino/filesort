@@ -197,7 +197,7 @@ status_t process_file(const settings_t *settings,
     free(rename_buffer);
 
     if (rename_gives < 0) {
-        return STATUS_ERR("could not rename file <placeholder>");
+        return STATUS_FAILED;
     }
 
     return STATUS_OK;

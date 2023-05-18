@@ -9,6 +9,7 @@ typedef union {
     enum {
         NORMAL,
         SKIP,
+        FAILED,
 
         /* newline + comment to empathize implementation detail */
         ID_UPPER_BOUND,
@@ -20,8 +21,10 @@ typedef union {
 #define STATUS_ERR(msg) ((status_t) { .description = (msg) })
 #define STATUS_OK ((status_t) {0})
 #define STATUS_SKIP ((status_t) { .id = SKIP })
+#define STATUS_FAILED ((status_t) { .id = FAILED })
 
 #define HAS_ERROR(s) (s.id > ID_UPPER_BOUND)
+#define HAS_FAILED(s) (s.id == FAILED)
 #define IS_NORMAL(s) (s.id == NORMAL)
 #define IS_SKIPPED(s) (s.id == SKIP)
 
