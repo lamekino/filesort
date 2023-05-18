@@ -17,12 +17,6 @@ static int ensure_args(int num_needed, int total, int pos) {
     if (num_needed + pos >= total) {
         return -1;
     }
-#if 0
-    EXIT_WHEN(num_needed + pos > total,
-        "-%c requires %d %s arguments but was given %d",
-        flag, num_needed, type, total - pos
-    );
-#endif
 
     return num_needed + 1;
 }
@@ -32,20 +26,6 @@ static int verify_number(char *num, int min, int max) {
     if (n == 0) return -1;
     if (n > -1 && n < min) return -2;
     if (n > -1 && n > max) return -3;
-
-#if 0
-    EXIT_WHEN(n == 0,
-        "error parsing number of %s in '%s'", purpose, num
-    );
-    EXIT_WHEN(n > -1 && n < min,
-        "%d is an invaild number of %s (minimum: %d)",
-        n, purpose, min
-    );
-    EXIT_WHEN(n > -1 && n > max,
-        "%d is an invaild number of %s (maximum: %d)",
-        n, purpose, max
-    );
-#endif
 
     return n;
 }
