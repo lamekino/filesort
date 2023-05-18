@@ -43,14 +43,11 @@ static int handle_flag(int index,
 
     switch (argv[index][1]) {
     case FLAG_THREAD_NUM: {
-#if 0
         args_parsed = ensure_args(1, argc, index);
 
         min_set_num = MIN_THREADS;
         max_set_num = MAX_THREADS;
         number_to_set = &(settings->num_threads);
-#endif
-        UNIMPLEMENTED;
     } break;
     case FLAG_FILENAME_PREFIX: {
         args_parsed = ensure_args(1, argc, index);
@@ -86,7 +83,13 @@ static int handle_flag(int index,
     }
 
     if (number_to_set != NULL && args_parsed > 1) {
-        UNIMPLEMENTED;
+        size_t verified = verify_number(argv[index + 1], min_set_num, max_set_num);
+        if (verified > 0) {
+            *number_to_set = verified;
+        }
+        else {
+            args_parsed = -1;
+        }
     }
 
     return args_parsed;
