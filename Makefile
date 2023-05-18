@@ -23,7 +23,8 @@ SRC = \
 	transform_file.c \
 	usage.c \
 	process_directory.c \
-	arguments.c
+	arguments.c \
+	apply_changes.c
 
 HEADERS = \
 	settings.h \
