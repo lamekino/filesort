@@ -1,7 +1,6 @@
 #include "process_directory.h"
 
 #include "error_handling.h"
-#include "arguments.h"
 #include "settings.h"
 #include "process_file.h"
 

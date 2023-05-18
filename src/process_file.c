@@ -4,7 +4,6 @@
 #include "process_directory.h"
 #include "init_dir.h"
 #include "settings.h"
-#include "arguments.h"
 
 #include <stdio.h>
 #include <stdarg.h>
