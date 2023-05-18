@@ -132,9 +132,6 @@ int read_args(char ***file_list,
         adx++;
     }
 
-    EXIT_WHEN(number_of_files == 0,
-        "no files provided!"
-    );
     return number_of_files;
 
 /*
@@ -146,14 +143,13 @@ MEMORY_ERROR:
     if (*file_list != NULL) {
         free(*file_list);
     }
-    EXIT_WHEN(1,
-        "could not allocate memory for files"
-    );
+
+    WARNING("could not allocate memory for file list");
+    exit(EXIT_FAILURE);
 FLAG_ERROR:
     if (*file_list != NULL) {
         free(*file_list);
     }
-    EXIT_WHEN(1,
-        "invalid argument for flag '%s'", argv[adx]
-    );
+    WARNING("invalid argument for flag '%s'", argv[adx]);
+    exit(EXIT_FAILURE);
 }

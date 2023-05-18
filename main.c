@@ -10,6 +10,21 @@
 #include <unistd.h>
 #include <limits.h>
 
+int handle_errors(status_t s) {
+    if (!HAS_ERROR(s)) {
+        return EXIT_SUCCESS;
+    }
+
+    if (IS_FATAL_ERR(s)) {
+        WARNING("fatal memory error! you need more RAM!!");
+        return EXIT_FAILURE;
+    }
+
+    WARNING("%s", s.description);
+    free(s.description);
+    return EXIT_FAILURE;
+}
+
 int main(int argc, char *argv[]) {
     char starting_path[PATH_MAX + 1];
 
@@ -19,22 +34,21 @@ int main(int argc, char *argv[]) {
     settings_t settings = { .execute = &apply_on_dir };
     status_t outcome = STATUS_NORMAL;
 
-    EXIT_WHEN(argc < 2,
-        "%s requires at least one argument\n", argv[0]
-    );
+    if (argc < 2) {
+        WARNING("%s requires at least one argument\n", argv[0]);
+        return EXIT_FAILURE;
+    }
 
     /* get the path the program was started in */
-    EXIT_WHEN(!getcwd(starting_path, PATH_MAX),
-        "could not get the current directory"
-    );
+    if (!getcwd(starting_path, PATH_MAX)) {
+        WARNING("could not get the current directory");
+        return EXIT_FAILURE;
+    };
 
     number_of_files = read_args(&files_to_process, &settings, argc, argv);
-    outcome = settings.execute(settings, number_of_files, starting_path, files_to_process);
+    outcome = settings.execute(settings, number_of_files, starting_path,
+            files_to_process);
+
     free(files_to_process);
-
-    EXIT_WHEN(HAS_ERROR(outcome),
-        "%s", outcome.description
-    );
-
-    return EXIT_SUCCESS;
+    return handle_errors(outcome);
 }
