@@ -142,6 +142,9 @@ int read_args(char ***file_list,
         adx++;
     }
 
+    EXIT_WHEN(number_of_files == 0,
+        "no files provided!"
+    );
     return number_of_files;
 
 /*
