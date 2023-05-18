@@ -1,4 +1,5 @@
 #include "arguments.h"
+#include "apply_changes.h"
 #include "error_handling.h"
 #include "usage.h"
 #include "transform_file.h"
@@ -57,6 +58,9 @@ static int handle_flag(int index,
         args_parsed = ensure_args(1, argc, index);
         string_to_set = &(settings->suffix);
     } break;
+    case FLAG_DIR_AS_FILE: {
+        settings->execute = &apply_on_files;
+    } break;
     case FLAG_CONFIRMATION: {
         settings->transform_file = &confirm_rename;
     } break;
@@ -68,6 +72,9 @@ static int handle_flag(int index,
     } break;
     case FLAG_RECURSIVE: {
         settings->use_recursion = 1;
+    } break;
+    case FLAG_TERMINATOR: {
+        settings->use_flag_terminator = 1;
     } break;
     case FLAG_HELP:
         usage(stdout, argv[0]);
@@ -105,7 +112,7 @@ int read_args(char ***file_list,
     while (adx < argc) {
         char **file_list_resize = NULL;
 
-        if (argv[adx][0] == '-') {
+        if (!settings->use_flag_terminator && argv[adx][0] == '-') {
             int args_parsed = handle_flag(adx, argc, argv, settings);
 
             if (args_parsed <= 0) goto FLAG_ERROR;

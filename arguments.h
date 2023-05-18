@@ -22,6 +22,9 @@
         "be recursive - go into directories" ) \
     X(FLAG_COPY_FILES, 'c', \
         "copies files instead of renaming them") \
+    X(FLAG_TERMINATOR, '-', \
+        "stop looking for flags, treats following arguments strictly as "\
+        "filenames")
 
 enum program_arguements {
     #define ENUMERATE(label, flag, _) label = flag,
