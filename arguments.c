@@ -122,7 +122,7 @@ status_t read_args(int *number_of_files,
             if (args_parsed <= 0) {
                 CREATE_STATUS_ERR(status,
                         "invalid argument for flag '%s'", argv[adx]);
-                break;
+                return status;
             }
             adx += args_parsed;
             continue;
@@ -134,7 +134,7 @@ status_t read_args(int *number_of_files,
         if (file_list_resize == NULL) {
             CREATE_STATUS_ERR(status,
                     "could not allocate memory for file list");
-            break;
+            return status;
         }
 
         /* set the value of the resized list and make the original pointer point
