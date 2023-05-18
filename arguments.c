@@ -90,7 +90,9 @@ static int handle_flag(int index,
     }
 
     if (number_to_set != NULL && args_parsed > 1) {
-        size_t verified = verify_number(argv[index + 1], min_set_num, max_set_num);
+        size_t verified =
+            verify_number(argv[index + 1], min_set_num, max_set_num);
+
         if (verified > 0) {
             *number_to_set = verified;
         }
@@ -102,12 +104,14 @@ static int handle_flag(int index,
     return args_parsed;
 }
 
-int read_args(char ***file_list,
-              settings_t *settings,
-              int argc,
-              char *argv[]) {
+status_t read_args(int *number_of_files,
+                   char ***file_list,
+                   settings_t *settings,
+                   int argc,
+                   char *argv[]) {
+    status_t status = STATUS_NORMAL;
+    int file_count = 0;
     int adx = 1;
-    int number_of_files = 0;
 
     while (adx < argc) {
         char **file_list_resize = NULL;
@@ -115,41 +119,32 @@ int read_args(char ***file_list,
         if (!settings->use_flag_terminator && argv[adx][0] == '-') {
             int args_parsed = handle_flag(adx, argc, argv, settings);
 
-            if (args_parsed <= 0) goto FLAG_ERROR;
+            if (args_parsed <= 0) {
+                CREATE_STATUS_ERR(status,
+                        "invalid argument for flag '%s'", argv[adx]);
+                break;
+            }
             adx += args_parsed;
             continue;
         }
 
-        number_of_files++;
-        file_list_resize = realloc(*file_list, sizeof(*file_list) * number_of_files);
-        if (file_list_resize == NULL) goto MEMORY_ERROR;
+        file_count++;
+        file_list_resize = realloc(*file_list, file_count * sizeof(*file_list));
+
+        if (file_list_resize == NULL) {
+            CREATE_STATUS_ERR(status,
+                    "could not allocate memory for file list");
+            break;
+        }
 
         /* set the value of the resized list and make the original pointer point
          * to it */
-        file_list_resize[number_of_files - 1] = argv[adx];
+        file_list_resize[file_count - 1] = argv[adx];
         *file_list = file_list_resize;
 
         adx++;
     }
 
-    return number_of_files;
-
-/*
- * NOTE: in defense of using a goto:
- * 1) this function allocates the memory, it shouldn't be the caller's responsiblity to in an error
- * 2) it reduces the complexity of the code if we were to just return -1
- */
-MEMORY_ERROR:
-    if (*file_list != NULL) {
-        free(*file_list);
-    }
-
-    WARNING("could not allocate memory for file list");
-    exit(EXIT_FAILURE);
-FLAG_ERROR:
-    if (*file_list != NULL) {
-        free(*file_list);
-    }
-    WARNING("invalid argument for flag '%s'", argv[adx]);
-    exit(EXIT_FAILURE);
+    *number_of_files = file_count;
+    return status;
 }

@@ -2,6 +2,7 @@
 #define __ARGUMENTS_H
 #include <stdio.h>
 #include "settings.h"
+#include "error_handling.h"
 
 #define ARGUMENT_XMAP(X) \
     X(FLAG_HELP, 'h', \
@@ -32,8 +33,9 @@ enum program_arguements {
     #undef ENUMERATE
 };
 
-int read_args(char ***file_list,
-              settings_t *settings,
-              int argc,
-              char *argv[]);
+status_t read_args(int *number_of_files,
+                   char ***file_list,
+                   settings_t *settings,
+                   int argc,
+                   char *argv[]);
 #endif

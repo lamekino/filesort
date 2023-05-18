@@ -45,9 +45,12 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     };
 
-    number_of_files = read_args(&files_to_process, &settings, argc, argv);
-    outcome = settings.execute(settings, number_of_files, starting_path,
-            files_to_process);
+    outcome = read_args(&number_of_files, &files_to_process, &settings,
+            argc, argv);
+    if (IS_NORMAL(outcome)) {
+        outcome = settings.execute(settings, number_of_files, starting_path,
+                files_to_process);
+    }
 
     free(files_to_process);
     return handle_errors(outcome);
