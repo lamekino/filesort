@@ -18,8 +18,21 @@ typedef union {
 } status_t;
 
 /* TODO: allow for printf strings in STATUS_ERR */
+#define USE_CREATE
+#ifndef USE_CREATE
 #define STATUS_ERR(msg) ((status_t) { .description = (msg) })
-#define STATUS_OK ((status_t) {0})
+#else
+#define STATUS_ERR_BUF_SIZE 256
+#define CREATE_STATUS_ERR(s, msg...) \
+    do { \
+        /* there could be unknown consquences of this... */ \
+        static char buf[STATUS_ERR_BUF_SIZE]; \
+        snprintf(buf, STATUS_ERR_BUF_SIZE, msg); \
+        s.description = buf; \
+    } while (0)
+#endif
+
+#define STATUS_NORMAL ((status_t) {0})
 #define STATUS_SKIP ((status_t) { .id = SKIP })
 #define STATUS_FAILED ((status_t) { .id = FAILED })
 

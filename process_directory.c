@@ -32,5 +32,5 @@ status_t process_directory(const settings_t *settings,
         }
     }
 
-    return STATUS_OK;
+    return STATUS_NORMAL;
 }
