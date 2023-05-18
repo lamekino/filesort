@@ -43,10 +43,9 @@ int main(int argc, char *argv[]) {
     int number_of_files = 0;
     status_t outcome = STATUS_OK;
 
-    if (argc < 2) {
-        fprintf(stderr, "%s requires at least one argument\n", argv[0]);
-        return EXIT_FAILURE;
-    }
+    EXIT_WHEN(argc < 2,
+        "%s requires at least one argument\n", argv[0]
+    );
 
     /* get the path the program was started in */
     EXIT_WHEN(!getcwd(starting_path, PATH_MAX),
