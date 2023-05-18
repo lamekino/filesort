@@ -1,5 +1,6 @@
-#include "error_handling.h"
 #include "process_file.h"
+
+#include "error_handling.h"
 #include "process_directory.h"
 #include "init_dir.h"
 #include "user_settings.h"
@@ -32,7 +33,7 @@ enum mask_shift_level {
     #undef ENUMERATE
 };
 
-#define SET_BIT(pos, mask, bit) ((mask) |= ((bit) << (pos)))
+#define SET_BIT(name, mask, bit) ((mask) |= ((bit) << (IDX_##name)))
 
 typedef unsigned int rename_mask_t;
 
@@ -102,13 +103,13 @@ static size_t get_new_filename(char *buffer,
     int num_duplicates = 0;
     size_t name_len = 0;
 
-   SET_BIT(IDX_HAS_EXTENSION, properties, info->extension != NULL);
-   SET_BIT(IDX_HAS_PREFIX, properties, settings->prefix != NULL);
-   SET_BIT(IDX_HAS_SUFFIX, properties, settings->suffix != NULL);
+   SET_BIT(HAS_EXTENSION, properties, info->extension != NULL);
+   SET_BIT(HAS_PREFIX, properties, settings->prefix != NULL);
+   SET_BIT(HAS_SUFFIX, properties, settings->suffix != NULL);
 
     while (file_exists || num_duplicates == 0) {
         info->num_duplicates = num_duplicates;
-        SET_BIT(IDX_HAS_DUPLICATE, properties, info->num_duplicates > 0);
+        SET_BIT(HAS_DUPLICATE, properties, info->num_duplicates > 0);
 
         name_len = get_possible_filename(buffer, max_len, properties, info);
         file_exists = access(buffer, F_OK) == 0;
@@ -150,6 +151,7 @@ static int recurse_directory(const struct user_settings *settings,
     len = init_dir(filename, &next_dir);
 
     /* this is indirect recursion! */
+    /* TODO: return this status */
     process_directory(settings, next_dir, len);
     closedir(next_dir);
 
@@ -160,13 +162,13 @@ static int recurse_directory(const struct user_settings *settings,
     return 1;
 }
 
-int process_file(const struct user_settings *settings,
-                 const char *filename,
-                 const size_t len) {
+status_t process_file(const struct user_settings *settings,
+                      const char *filename,
+                      const size_t len) {
     file_info_t info;
     struct stat stat_info;
     char *rename_buffer = NULL;
-    int rename_status = 0;
+    int rename_gives;
 
     EXIT_WHEN(stat(filename, &stat_info) < 0,
        "could not stat file '%s'", filename
@@ -174,7 +176,7 @@ int process_file(const struct user_settings *settings,
 
     /* if using recursion, don't rename the directory but process the files */
     if (recurse_directory(settings, filename, stat_info)) {
-        return 1;
+        return STATUS_SKIP;
     }
 
     /* set the known info about a file */
@@ -186,13 +188,17 @@ int process_file(const struct user_settings *settings,
     };
 
     rename_buffer = malloc(len);
-    EXIT_WHEN(rename_buffer == NULL,
-       "could not allocate memory for filename."
-    );
+    if (rename_buffer == NULL) {
+        return STATUS_ERR("could not allocate space for renamed file");
+    }
 
     get_new_filename(rename_buffer, len, &info);
-    rename_status = rename_wrapper(settings, info.filename, rename_buffer);
+    rename_gives = rename_wrapper(settings, info.filename, rename_buffer);
     free(rename_buffer);
 
-    return rename_status;
+    if (rename_gives < 0) {
+        return STATUS_ERR("could not rename file <placeholder>");
+    }
+
+    return STATUS_OK;
 }

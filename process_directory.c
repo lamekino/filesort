@@ -1,4 +1,5 @@
 #include "process_directory.h"
+
 #include "error_handling.h"
 #include "arguments.h"
 #include "user_settings.h"
@@ -8,13 +9,13 @@
 #include <stdlib.h>
 #include <dirent.h>
 
-void process_directory(const struct user_settings *settings,
-                       DIR *dir,
-                       size_t max_fname_len) {
+status_t process_directory(const struct user_settings *settings,
+                           DIR *dir,
+                           size_t max_fname_len) {
     struct dirent *dir_entry = NULL;
+    status_t status;
 
     while ((dir_entry = readdir(dir))) {
-        int status = 0;
         /* skip hidden files, parent, current */
         if (dir_entry->d_name[0] == '.') {
             continue;
@@ -23,8 +24,10 @@ void process_directory(const struct user_settings *settings,
         /* TODO: don't use max size for alloc, do something more sensible */
         status = process_file(settings, dir_entry->d_name, max_fname_len);
 
-        if (status < 0) {
+        if (HAS_ERROR(status)) {
             fprintf(stderr, "failed to rename '%s'\n", dir_entry->d_name);
         }
     }
+
+    return STATUS_OK;
 }
