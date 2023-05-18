@@ -38,7 +38,6 @@ static status_t apply_on_dir(const struct user_settings settings,
 int main(int argc, char *argv[]) {
     struct user_settings settings = {0};
     char starting_path[PATH_MAX];
-    int idx;
     char **files_to_process = NULL;
     int number_of_files = 0;
     status_t outcome = STATUS_OK;
