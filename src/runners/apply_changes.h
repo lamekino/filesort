@@ -1,8 +1,8 @@
 #ifndef __APPLY_CHANGES_H
 #define __APPLY_CHANGES_H
 
-#include "settings.h"
-#include "error_handling.h"
+#include "util/settings.h"
+#include "util/error_handling.h"
 
 /* TODO: make this a sensible number */
 #define FNAME_MIN 32

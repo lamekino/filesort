@@ -3,8 +3,8 @@
 #include "args/arguments.h"
 #include "args/handle_flag.h"
 
-#include "error_handling.h"
-#include "settings.h"
+#include "util/error_handling.h"
+#include "util/settings.h"
 
 #include <stdio.h>
 #include <stdlib.h>

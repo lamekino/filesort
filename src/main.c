@@ -1,9 +1,9 @@
 #include "args/read_args.h"
-#include "process_directory.h"
-#include "error_handling.h"
-#include "settings.h"
-#include "init_dir.h"
-#include "apply_changes.h"
+#include "dir/init_dir.h"
+#include "dir/process_directory.h"
+#include "runners/apply_changes.h"
+#include "util/error_handling.h"
+#include "util/settings.h"
 
 #include <stdio.h>
 #include <stdlib.h>

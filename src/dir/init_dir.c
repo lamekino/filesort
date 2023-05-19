@@ -1,6 +1,6 @@
-#include "init_dir.h"
+#include "dir/init_dir.h"
 
-#include "error_handling.h"
+#include "util/error_handling.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>

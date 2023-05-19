@@ -1,7 +1,7 @@
 #ifndef __PROCESS_FILE_H
 #define __PROCESS_FILE_H
-#include "error_handling.h"
-#include "settings.h"
+#include "util/error_handling.h"
+#include "util/settings.h"
 #include <time.h>
 
 typedef struct {

@@ -1,10 +1,10 @@
-#include "apply_changes.h"
+#include "runners/apply_changes.h"
 
-#include "settings.h"
-#include "error_handling.h"
-#include "init_dir.h"
-#include "process_directory.h"
-#include "process_file.h"
+#include "util/settings.h"
+#include "util/error_handling.h"
+#include "dir/init_dir.h"
+#include "dir/process_directory.h"
+#include "file/process_file.h"
 
 #include <dirent.h>
 #include <stdlib.h>

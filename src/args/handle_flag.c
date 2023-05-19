@@ -1,11 +1,11 @@
-#include "handle_flag.h"
+#include "args/handle_flag.h"
 #include "args/arguments.h"
 #include "args/usage.h"
 
-#include "apply_changes.h"
-#include "error_handling.h"
-#include "transform_file.h"
-#include "settings.h"
+#include "runners/apply_changes.h"
+#include "util/error_handling.h"
+#include "transform/handlers.h"
+#include "util/settings.h"
 
 #include <stdlib.h>
 
@@ -100,7 +100,7 @@ status_t handle_flag(int *pos,
     }
 
     if (number_to_set != NULL) {
-        size_t verified =
+        int verified =
             verify_number(argv[index + 1], min_set_num, max_set_num);
 
         if (verified < 0) {

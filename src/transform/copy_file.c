@@ -10,20 +10,6 @@
 #include <linux/version.h>
 #endif
 
-int confirm_rename(const char *src, const char *dest) {
-    char user_input[64];
-
-    printf("rename '%s' to '%s'? [y/N] ", src, dest);
-    fgets(user_input, 64, stdin);
-    if (user_input[0] == 'y' || user_input[0] == 'Y') {
-        printf("renamed '%s' ->'%s'\n", src, dest);
-        return rename(src, dest);
-    }
-
-    printf("skipping '%s'...\n", src);
-    return 0;
-}
-
 /* modified from: https://stackoverflow.com/a/2180157 */
 /* posix c does not have a copy_file() SMH */
 static int copy_file_internal(const char* src, const char* dest)
@@ -68,8 +54,4 @@ static int copy_file_internal(const char* src, const char* dest)
 int copy_file(const char *src, const char *dest) {
     printf("copying '%s' -> '%s'\n", src, dest);
     return copy_file_internal(src, dest);
-}
-
-int dry_rename(const char *src, const char *dest) {
-    return printf("would rename '%s' -> '%s'\n", src, dest);
 }

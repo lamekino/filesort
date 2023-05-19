@@ -1,9 +1,9 @@
-#include "process_file.h"
+#include "file/process_file.h"
 
-#include "error_handling.h"
-#include "process_directory.h"
-#include "init_dir.h"
-#include "settings.h"
+#include "util/error_handling.h"
+#include "dir/process_directory.h"
+#include "dir/init_dir.h"
+#include "util/settings.h"
 
 #include <stdio.h>
 #include <stdarg.h>

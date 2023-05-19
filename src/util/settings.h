@@ -1,7 +1,7 @@
 #ifndef __SETTINGS_H
 #define __SETTINGS_H
 
-#include "error_handling.h"
+#include "util/error_handling.h"
 #include <stdlib.h>
 
 struct settings;
