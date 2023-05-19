@@ -1,4 +1,4 @@
-#include "dir/init_dir.h"
+#include "util/init_dir.h"
 
 #include "util/error_handling.h"
 #include <stdlib.h>
