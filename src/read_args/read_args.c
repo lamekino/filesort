@@ -1,7 +1,7 @@
-#include "args/read_args.h"
+#include "read_args/read_args.h"
 
-#include "args/arguments.h"
-#include "args/handle_flag.h"
+#include "read_args/arguments.h"
+#include "read_args/handle_flag.h"
 
 #include "util/error_handling.h"
 #include "util/settings.h"

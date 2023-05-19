@@ -1,5 +1,5 @@
-#include "args/usage.h"
-#include "args/arguments.h"
+#include "read_args/usage.h"
+#include "read_args/arguments.h"
 
 #include <stdio.h>
 
