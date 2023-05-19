@@ -7,6 +7,7 @@ ifeq ($(PREFIX),)
 endif
 
 CC = gcc
+INCLUDE = -I$(SRC_DIR)
 
 ifeq ($(DEBUG),1)
 	CCFLAGS = \
@@ -35,6 +36,6 @@ $(PROG_NAME): $(OBJ)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@) || true
-	$(CC) $(CCFLAGS) -c -o $@ $<
+	$(CC) $(INCLUDE) $(CCFLAGS) -c -o $@ $<
 
 .PHONY: all clean install
