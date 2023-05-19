@@ -3,7 +3,7 @@
 #include "util/settings.h"
 #include "util/error_handling.h"
 #include "util/init_dir.h"
-#include "dir/process_directory.h"
+#include "process_directory/process_directory.h"
 #include "file/process_file.h"
 
 #include <dirent.h>

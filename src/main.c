@@ -1,6 +1,6 @@
 #include "args/read_args.h"
 #include "util/init_dir.h"
-#include "dir/process_directory.h"
+#include "process_directory/process_directory.h"
 #include "runners/apply_changes.h"
 #include "util/error_handling.h"
 #include "util/settings.h"
