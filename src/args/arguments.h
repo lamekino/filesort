@@ -1,7 +1,6 @@
 #ifndef __ARGUMENTS_H
 #define __ARGUMENTS_H
 #include <stdio.h>
-#include "settings.h"
 #include "error_handling.h"
 
 #define ARGUMENT_XMAP(X) \
