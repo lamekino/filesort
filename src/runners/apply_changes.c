@@ -2,7 +2,7 @@
 
 #include "util/settings.h"
 #include "util/error_handling.h"
-#include "dir/init_dir.h"
+#include "util/init_dir.h"
 #include "dir/process_directory.h"
 #include "file/process_file.h"
 

@@ -1,5 +1,5 @@
 #include "args/read_args.h"
-#include "dir/init_dir.h"
+#include "util/init_dir.h"
 #include "dir/process_directory.h"
 #include "runners/apply_changes.h"
 #include "util/error_handling.h"

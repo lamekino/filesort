@@ -1,5 +1,5 @@
 #include "util/settings.h"
-#include "dir/init_dir.h"
+#include "util/init_dir.h"
 #include "dir/process_directory.h"
 
 #include <unistd.h>

@@ -6,7 +6,7 @@
 #include "util/str_append.h"
 #include "util/error_handling.h"
 #include "dir/process_directory.h"
-#include "dir/init_dir.h"
+#include "util/init_dir.h"
 #include "util/settings.h"
 
 #include <stdio.h>
