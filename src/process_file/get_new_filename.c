@@ -1,4 +1,6 @@
-#include "file/file_info.h"
+#include "process_file/get_new_filename.h"
+
+#include "process_file/file_info.h"
 #include "util/str_append.h"
 #include "util/settings.h"
 

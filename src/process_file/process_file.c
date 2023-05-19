@@ -1,11 +1,11 @@
-#include "file/process_file.h"
+#include "process_file/process_file.h"
 
-#include "file/get_new_filename.h"
-#include "file/recurse_directory.h"
-#include "file/file_info.h"
+#include "process_file/get_new_filename.h"
+#include "process_file/recurse_directory.h"
+#include "process_file/file_info.h"
+#include "process_directory/process_directory.h"
 #include "util/str_append.h"
 #include "util/error_handling.h"
-#include "dir/process_directory.h"
 #include "util/init_dir.h"
 #include "util/settings.h"
 

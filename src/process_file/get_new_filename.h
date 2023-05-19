@@ -1,6 +1,6 @@
 #ifndef __GET_NEW_FILENAME_H
 #define __GET_NEW_FILENAME_H
-#include "file/file_info.h"
+#include "process_file/file_info.h"
 #include <stddef.h>
 
 size_t get_new_filename(char *buffer,

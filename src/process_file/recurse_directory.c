@@ -1,6 +1,6 @@
 #include "util/settings.h"
 #include "util/init_dir.h"
-#include "dir/process_directory.h"
+#include "process_directory/process_directory.h"
 
 #include <unistd.h>
 #include <dirent.h>
