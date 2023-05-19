@@ -1,5 +1,6 @@
 # Project Executable
 filesort
+.cache/*
 # Prerequisites
 *.d
 
