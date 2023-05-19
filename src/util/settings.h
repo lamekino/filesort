@@ -7,12 +7,12 @@
 struct settings;
 
 /* see: apply_changes.h */
-typedef status_t (*applicator)(const struct settings *,
-                               const int,
-                               const char *,
-                               char **);
+typedef status_t (*applicator_f)(const struct settings *,
+                                 const int,
+                                 const char *,
+                                 char **);
 
-typedef int (*transformer)(const char *, const char *);
+typedef int (*operation_f)(const char *, const char *);
 
 typedef struct settings {
     size_t num_threads;
@@ -23,8 +23,8 @@ typedef struct settings {
     unsigned int use_recursion:1;
     unsigned int use_flag_terminator:1;
 
-    transformer transform_file;
-    applicator execute;
+    operation_f operation;
+    applicator_f run;
 } settings_t;
 
 #endif

@@ -18,12 +18,12 @@
 static int rename_wrapper(const settings_t *settings,
                           const char *src,
                           const char *dest) {
-    if (settings->transform_file == NULL) {
+    if (settings->operation == NULL) {
         printf("renaming '%s' -> '%s'\n", src, dest);
         return rename(src, dest);
     }
 
-    return settings->transform_file(src, dest);
+    return settings->operation(src, dest);
 }
 
 

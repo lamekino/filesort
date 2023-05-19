@@ -8,13 +8,11 @@ status_t apply_settings(const settings_t *settings,
                         const int number_of_files,
                         const char *starting_path,
                         char **file_list) {
-    applicator default_application = &run_on_dirnames;
+    applicator_f default_run = &run_on_dirnames;
 
-    if (settings->execute == NULL) {
-        return default_application(settings,
-                number_of_files, starting_path, file_list);
+    if (settings->run == NULL) {
+        return default_run(settings, number_of_files, starting_path, file_list);
     }
 
-    return settings->execute(settings,
-            number_of_files, starting_path, file_list);
+    return settings->run(settings, number_of_files, starting_path, file_list);
 }

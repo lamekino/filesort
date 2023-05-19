@@ -60,16 +60,16 @@ status_t handle_flag(int *pos,
         string_to_set = &(settings->suffix);
     } break;
     case FLAG_DIR_AS_FILE: {
-        settings->execute = &run_on_files;
+        settings->run = &run_on_files;
     } break;
     case FLAG_CONFIRMATION: {
-        settings->transform_file = &confirm_rename;
+        settings->operation = &confirm_rename;
     } break;
     case FLAG_COPY_FILES: {
-        settings->transform_file = &copy_file;
+        settings->operation = &copy_file;
     } break;
     case FLAG_DRY_RUN: {
-        settings->transform_file = &dry_rename;
+        settings->operation = &dry_rename;
     } break;
     case FLAG_RECURSIVE: {
         settings->use_recursion = 1;
