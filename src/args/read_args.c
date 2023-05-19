@@ -1,12 +1,12 @@
-#include "read_args.h"
+#include "args/read_args.h"
 
-#include "arguments.h"
-#include "handle_flag.h"
+#include "args/arguments.h"
+#include "args/handle_flag.h"
 
-#include "../apply_changes.h"
-#include "../error_handling.h"
-#include "../transform_file.h"
-#include "../settings.h"
+#include "apply_changes.h"
+#include "error_handling.h"
+#include "transform_file.h"
+#include "settings.h"
 
 #include <stdio.h>
 #include <stdlib.h>

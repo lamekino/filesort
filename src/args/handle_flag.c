@@ -1,8 +1,8 @@
-#include "arguments.h"
-#include "usage.h"
+#include "args/arguments.h"
+#include "args/usage.h"
 
-#include "../apply_changes.h"
-#include "../transform_file.h"
+#include "apply_changes.h"
+#include "transform_file.h"
 
 #include <stdlib.h>
 
