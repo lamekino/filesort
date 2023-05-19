@@ -7,13 +7,13 @@
 /* TODO: make this a sensible number */
 #define FNAME_MIN 32
 
-status_t apply_on_dir(const settings_t settings,
+status_t run_on_dirnames(const settings_t *settings,
+                         const int number_of_files,
+                         const char *starting_path,
+                         char **file_list);
+
+status_t run_on_files(const settings_t *settings,
                       const int number_of_files,
                       const char *starting_path,
                       char **file_list);
-
-status_t apply_on_files(const settings_t settings,
-                        const int number_of_files,
-                        const char *starting_path,
-                        char **file_list);
 #endif

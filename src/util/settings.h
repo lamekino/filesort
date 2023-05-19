@@ -7,7 +7,7 @@
 struct settings;
 
 /* see: apply_changes.h */
-typedef status_t (*applicator)(const struct settings,
+typedef status_t (*applicator)(const struct settings *,
                                const int,
                                const char *,
                                char **);
@@ -26,4 +26,5 @@ typedef struct settings {
     transformer transform_file;
     applicator execute;
 } settings_t;
+
 #endif

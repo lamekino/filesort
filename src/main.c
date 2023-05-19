@@ -1,8 +1,8 @@
 #include "read_args/read_args.h"
-#include "util/init_dir.h"
-#include "process_directory/process_directory.h"
-#include "runners/apply_changes.h"
+#include "apply_settings/apply_settings.h"
+
 #include "util/error_handling.h"
+#include "util/init_dir.h"
 #include "util/settings.h"
 
 #include <stdio.h>
@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <limits.h>
 
-int handle_errors(status_t s) {
+int report_errors(status_t s) {
     if (!HAS_ERROR(s)) {
         return EXIT_SUCCESS;
     }
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     int number_of_files = 0;
     char **files_to_process = NULL;
 
-    settings_t settings = { .execute = &apply_on_dir };
+    settings_t settings = {0};
     status_t outcome = STATUS_NORMAL;
 
     if (argc < 2) {
@@ -45,13 +45,14 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     };
 
-    outcome = read_args(&number_of_files, &files_to_process, &settings,
-            argc, argv);
+    outcome =
+        read_args(&number_of_files, &files_to_process, &settings, argc, argv);
     if (IS_NORMAL(outcome)) {
-        outcome = settings.execute(settings, number_of_files, starting_path,
-                files_to_process);
+        outcome =
+            apply_settings(&settings, number_of_files, starting_path,
+                    files_to_process);
     }
 
     free(files_to_process);
-    return handle_errors(outcome);
+    return report_errors(outcome);
 }

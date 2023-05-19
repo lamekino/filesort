@@ -2,7 +2,7 @@
 #include "read_args/arguments.h"
 #include "read_args/usage.h"
 
-#include "runners/apply_changes.h"
+#include "apply_settings/applications.h"
 #include "util/error_handling.h"
 #include "transform/handlers.h"
 #include "util/settings.h"
@@ -60,7 +60,7 @@ status_t handle_flag(int *pos,
         string_to_set = &(settings->suffix);
     } break;
     case FLAG_DIR_AS_FILE: {
-        settings->execute = &apply_on_files;
+        settings->execute = &run_on_files;
     } break;
     case FLAG_CONFIRMATION: {
         settings->transform_file = &confirm_rename;
