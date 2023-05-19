@@ -2,7 +2,7 @@
 
 #include "util/error_handling.h"
 #include "util/settings.h"
-#include "file/process_file.h"
+#include "process_file/process_file.h"
 
 #include <stdio.h>
 #include <stdlib.h>
