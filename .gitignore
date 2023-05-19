@@ -1,6 +1,10 @@
 # Project Executable
 filesort
+
+# clang junk
 .cache/*
+compile_commands.json
+
 # Prerequisites
 *.d
 

@@ -31,6 +31,9 @@ clean:
 install: all
 	install -m 0755 $(PROG_NAME) $(PREFIX)/bin
 
+compile_commands.json:
+	@bear -- make
+
 $(PROG_NAME): $(OBJ)
 	$(CC) -o $@ $^
 
@@ -38,4 +41,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@) || true
 	$(CC) $(INCLUDE) $(CCFLAGS) -c -o $@ $<
 
-.PHONY: all clean install
+.PHONY: all clean install compile_commands.json
