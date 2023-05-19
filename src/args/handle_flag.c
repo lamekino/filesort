@@ -1,8 +1,11 @@
+#include "handle_flag.h"
 #include "args/arguments.h"
 #include "args/usage.h"
 
 #include "apply_changes.h"
+#include "error_handling.h"
 #include "transform_file.h"
+#include "settings.h"
 
 #include <stdlib.h>
 
@@ -27,16 +30,18 @@ static int verify_number(char *num, int min, int max) {
     return n;
 }
 
-int handle_flag(int index,
-                int argc,
-                char *argv[],
-                settings_t *settings) {
+status_t handle_flag(int *pos,
+                     int argc,
+                     char *argv[],
+                     settings_t *settings) {
+    status_t status = STATUS_NORMAL;
+    int index = *pos;
     int args_parsed = 1;
 
     char **string_to_set = NULL;
 
     size_t *number_to_set = NULL;
-    int min_set_num, max_set_num;
+    int min_set_num = 0, max_set_num = 0;
 
     switch (argv[index][1]) {
     case FLAG_THREAD_NUM: {
@@ -72,30 +77,42 @@ int handle_flag(int index,
     case FLAG_TERMINATOR: {
         settings->use_flag_terminator = 1;
     } break;
-    case FLAG_HELP:
+    case FLAG_HELP: {
         usage(stdout, argv[0]);
-        exit(EXIT_SUCCESS);
-    default:
-        fprintf(stderr, "Unknown flag: '%s'\n", argv[index]);
+        status = STATUS_SKIP;
+    } break;
+    default: {
         usage(stderr, argv[0]);
-        exit(EXIT_FAILURE);
+        CREATE_STATUS_ERR(status,
+                "Unknown flag: '%s'\n", argv[index]);
+    } break;
     }
 
-    if (string_to_set != NULL && args_parsed > 1) {
+    /* FIXME: this is the worst looking code ever */
+    if (args_parsed < 0) {
+        CREATE_STATUS_ERR(status,
+                "argument required for flag '%s'", argv[index]);
+        return status;
+    }
+
+    if (string_to_set != NULL) {
         *string_to_set = argv[index + 1];
     }
 
-    if (number_to_set != NULL && args_parsed > 1) {
+    if (number_to_set != NULL) {
         size_t verified =
             verify_number(argv[index + 1], min_set_num, max_set_num);
 
-        if (verified > 0) {
-            *number_to_set = verified;
+        if (verified < 0) {
+            CREATE_STATUS_ERR(status,
+                    "invaild number '%s' for flag '%s' (min: %d, max: %d)",
+                    argv[index + 1], argv[index], min_set_num, max_set_num);
+            return status;
         }
-        else {
-            args_parsed = -1;
-        }
+        *number_to_set = verified;
     }
 
-    return args_parsed;
+    *pos += args_parsed;
+
+    return status;
 }

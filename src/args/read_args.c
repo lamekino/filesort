@@ -3,15 +3,12 @@
 #include "args/arguments.h"
 #include "args/handle_flag.h"
 
-#include "apply_changes.h"
 #include "error_handling.h"
-#include "transform_file.h"
 #include "settings.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 
 status_t read_args(int *number_of_files,
                    char ***file_list,
@@ -26,14 +23,10 @@ status_t read_args(int *number_of_files,
         char **file_list_resize = NULL;
 
         if (!settings->use_flag_terminator && argv[adx][0] == '-') {
-            int args_parsed = handle_flag(adx, argc, argv, settings);
-
-            if (args_parsed <= 0) {
-                CREATE_STATUS_ERR(status,
-                        "invalid argument for flag '%s'", argv[adx]);
+            status = handle_flag(&adx, argc, argv, settings);
+            if (HAS_ERROR(status) || IS_SKIPPED(status)) {
                 return status;
             }
-            adx += args_parsed;
             continue;
         }
 
@@ -48,10 +41,8 @@ status_t read_args(int *number_of_files,
 
         /* set the value of the resized list and make the original pointer point
          * to it */
-        file_list_resize[file_count - 1] = argv[adx];
+        file_list_resize[file_count - 1] = argv[adx++];
         *file_list = file_list_resize;
-
-        adx++;
     }
 
     *number_of_files = file_count;
