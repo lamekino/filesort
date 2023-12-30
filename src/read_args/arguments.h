@@ -1,7 +1,7 @@
 #ifndef __ARGUMENTS_H
 #define __ARGUMENTS_H
-#include <stdio.h>
 #include "util/error_handling.h"
+#include "util/settings.h"
 
 #define ARGUMENT_XMAP(X) \
     X(FLAG_HELP, 'h', \
@@ -30,6 +30,28 @@ enum program_arguements {
     #define ENUMERATE(label, flag, _) label = flag,
         ARGUMENT_XMAP(ENUMERATE)
     #undef ENUMERATE
+    NUM_FLAGS
 };
 
-#endif
+enum argument_type {
+    NONE,
+    HELP,
+    STR,
+    NUM,
+};
+
+struct number_argument {
+    int min;
+    int max;
+    int *field;
+};
+
+struct argument_data {
+    enum argument_type type;
+    union {
+        struct number_argument num;
+        char **str;
+    };
+};
+
+#endif /* __ARGUMENTS_H */
