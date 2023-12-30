@@ -140,6 +140,7 @@ status_t handle_flag(int *pos, int argc, char *argv[], settings_t *settings) {
         usage(stderr, argv[0]);
         CREATE_STATUS_ERR(status,
                 "unknown flag: '%s'\n", argv[idx]);
+        return status;
     }
 
     additional_args = ensure_args(args_needed, argc, idx);
