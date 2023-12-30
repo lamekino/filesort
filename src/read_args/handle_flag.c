@@ -18,7 +18,7 @@ static int ensure_args(int num_needed, int total, int pos) {
         return -1;
     }
 
-    return num_needed + 1;
+    return num_needed;
 }
 
 static int verify_number(char *s, int min, int max) {
