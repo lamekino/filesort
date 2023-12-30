@@ -24,7 +24,7 @@ status_t read_args(int *number_of_files,
 
         if (!settings->use_flag_terminator && argv[adx][0] == '-') {
             status = handle_flag(&adx, argc, argv, settings);
-            if (HAS_ERROR(status) || IS_SKIPPED(status)) {
+            if (!IS_NORMAL(status)) {
                 return status;
             }
             continue;
