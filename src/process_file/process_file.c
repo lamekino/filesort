@@ -49,7 +49,6 @@ status_t process_file(const settings_t *settings,
 
     /* set the known info about a file */
     info = (struct file_info) {
-        .user_settings = settings,
         .filename = filename,
         .creation_time = stat_info.st_ctime,
         .extension = strrchr(filename, '.')
@@ -62,7 +61,7 @@ status_t process_file(const settings_t *settings,
         return status;
     }
 
-    get_new_filename(rename_buffer, len, &info);
+    get_new_filename(rename_buffer, len, settings, &info);
     rename_gives = rename_wrapper(settings, info.filename, rename_buffer);
     free(rename_buffer);
 

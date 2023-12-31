@@ -1,93 +1,73 @@
 #include "process_file/get_new_filename.h"
 
 #include "process_file/file_info.h"
+#include "util/error_handling.h"
 #include "util/str_append.h"
 #include "util/settings.h"
 
+#include <stdbool.h>
 #include <unistd.h>
 
-#define MASK_XMAP(X) \
-    /* mask name -> shift level */ \
-    X(HAS_EXTENSION, 0) \
-    X(HAS_DUPLICATE, 1) \
-    X(HAS_PREFIX, 2) \
-    X(HAS_SUFFIX, 3)
-
-enum rename_properties {
-    #define ENUMERATE(label, shift_level) label = 1 << shift_level,
-        MASK_XMAP(ENUMERATE)
-    #undef ENUMERATE
-};
-
-enum mask_shift_level {
-    /* IDX_HAS_EXTENSION = 0, ... */
-    #define ENUMERATE(label, index) IDX_##label = index,
-        MASK_XMAP(ENUMERATE)
-    #undef ENUMERATE
-};
-
-#define SET_BIT(name, mask, bit) ((mask) |= ((bit) << (IDX_##name)))
-
-typedef unsigned int rename_mask_t;
+#define MAX_DUPLICATES 128u
 
 static size_t get_possible_filename(char *buffer,
                                     const size_t max_len,
-                                    const rename_mask_t properties,
+                                    const settings_t *settings,
                                     const struct file_info *info) {
-    const settings_t *settings = info->user_settings;
     size_t offset = 0;
+
+    #define BUFFER_APPEND(...) offset += \
+        str_append(buffer, offset, max_len, __VA_ARGS__)
+
     /*
      * Do the pre- timestamp parts
      */
-    if (properties & HAS_PREFIX) {
-        offset += str_append(buffer, offset, max_len,
-                "%s", settings->prefix);
+    if (settings->prefix != NULL) {
+        BUFFER_APPEND("%s", settings->prefix);
     }
     /*
      * add the date info
      */
-    offset += str_append(buffer, offset, max_len,
-            "%ld", info->creation_time);
+    BUFFER_APPEND("%ld", info->creation_time);
 
     /*
      * do the post- timestamp parts
      */
-    if (properties & HAS_DUPLICATE) {
-        offset += str_append(buffer, offset, max_len,
-                ".%d", info->num_duplicates);
+    if (info->num_duplicates > 0) {
+        BUFFER_APPEND(".%d", info->num_duplicates);
     }
-    if (properties & HAS_EXTENSION) {
-        offset += str_append(buffer, offset, max_len,
-                "%s", info->extension);
+
+    if (settings->suffix != NULL) {
+        BUFFER_APPEND("%s", settings->suffix);
     }
-    if (properties & HAS_SUFFIX) {
-        offset += str_append(buffer, offset, max_len,
-                "%s", settings->suffix);
+
+    if (info->extension != NULL) {
+        BUFFER_APPEND("%s", info->extension);
     }
+
+    if (settings->appendix != NULL) {
+        BUFFER_APPEND("%s", settings->suffix);
+    }
+
+    #undef BUFFER_APPEND
 
     return offset;
 }
 
 size_t get_new_filename(char *buffer,
                         const size_t max_len,
+                        const settings_t *settings,
                         struct file_info *info) {
-    const settings_t *settings = info->user_settings;
-    rename_mask_t properties = 0;
-    int file_exists = 0;
-    int num_duplicates = 0;
     size_t name_len = 0;
+    bool file_exists = false;
 
-   SET_BIT(HAS_EXTENSION, properties, info->extension != NULL);
-   SET_BIT(HAS_PREFIX, properties, settings->prefix != NULL);
-   SET_BIT(HAS_SUFFIX, properties, settings->suffix != NULL);
+    while (file_exists) {
+        name_len = get_possible_filename(buffer, max_len, settings, info);
 
-    while (file_exists || num_duplicates == 0) {
-        info->num_duplicates = num_duplicates;
-        SET_BIT(HAS_DUPLICATE, properties, info->num_duplicates > 0);
-
-        name_len = get_possible_filename(buffer, max_len, properties, info);
-        file_exists = access(buffer, F_OK) == 0;
-        num_duplicates += 1;
+        info->num_duplicates++;
+        if (info->num_duplicates == MAX_DUPLICATES) {
+            ASSERT(0 && "TODO: implement errors here");
+        }
     }
 
     return name_len;

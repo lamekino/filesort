@@ -8,7 +8,6 @@ struct file_info {
     time_t creation_time;
     char *extension;
     const char *filename;
-    const settings_t *user_settings;
 };
 
 #endif
