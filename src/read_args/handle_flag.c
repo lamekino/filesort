@@ -65,6 +65,11 @@ static int argument_data_from_flag(settings_t *settings, char flag,
         data->type = STR;
         data->str = &(settings->suffix);
         break;
+    case FILE_FILENAME_APPEND:
+        args_needed = 1;
+        data->type = STR;
+        data->str = &(settings->appendix);
+        break;
     case FLAG_DIR_AS_FILE:
         settings->run = &run_on_files;
         break;

@@ -19,6 +19,7 @@ typedef struct settings {
 
     char *prefix;
     char *suffix;
+    char *appendix;
 
     unsigned int use_recursion:1;
     unsigned int use_flag_terminator:1;

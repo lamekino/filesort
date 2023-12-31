@@ -9,7 +9,9 @@
     X(FLAG_FILENAME_PREFIX, 'P', \
         "set a string to prefix renamed files") \
     X(FLAG_FILENAME_SUFFIX, 'S', \
-        "set a string to suffix renamed files") \
+        "set a string to suffix renamed files (before extension)") \
+    X(FILE_FILENAME_APPEND, 'A', \
+        "set a string to append renamed files (after extension)") \
     X(FLAG_THREAD_NUM, 't', \
         "[WIP] set a number of threads to use") \
     X(FLAG_DRY_RUN, 'd', \
