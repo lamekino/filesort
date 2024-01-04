@@ -14,6 +14,9 @@ typedef status_t (*applicator_f)(const struct settings *,
 
 typedef int (*operation_f)(const char *, const char *);
 
+/*
+ * FIXME: this is a god object
+ */
 typedef struct settings {
     size_t num_threads;
 
