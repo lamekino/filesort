@@ -5,7 +5,7 @@ int confirm_rename(const char *src, const char *dest) {
     char user_input[64];
 
     printf("rename '%s' to '%s'? [y/N] ", src, dest);
-    if (fgets(user_input, 64, stdin) == NULL) {
+    if (fgets(user_input, sizeof(user_input), stdin) == NULL) {
         printf("invalid input, skipping...");
         return 0;
     }
