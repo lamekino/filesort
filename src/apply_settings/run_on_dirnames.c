@@ -28,7 +28,7 @@ status_t run_on_dirnames(const settings_t *settings,
             status = process_directory(settings, dir, new_filename_len);
         }
         else {
-            CREATE_STATUS_ERR(status,
+            status = create_status_err(
                     "error in opening directory '%s'", file_list[idx]);
         }
         closedir(dir);

@@ -34,9 +34,7 @@ status_t read_args(int *number_of_files,
         file_list_resize = realloc(*file_list, file_count * sizeof(*file_list));
 
         if (file_list_resize == NULL) {
-            CREATE_STATUS_ERR(status,
-                    "could not allocate memory for file list");
-            return status;
+            return STATUS_NO_MEM;
         }
 
         /* set the value of the resized list and make the original pointer point

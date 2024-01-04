@@ -2,6 +2,7 @@
 #include "util/init_dir.h"
 #include "process_directory/process_directory.h"
 
+#include <stdio.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>

@@ -100,7 +100,6 @@ static int argument_data_from_flag(settings_t *settings, char flag,
 
 static status_t set_flag(const struct argument_data *data,
         char *argv[], int index) {
-    status_t status = STATUS_NORMAL;
     int verified = 0;
 
     switch (data->type) {
@@ -108,8 +107,7 @@ static status_t set_flag(const struct argument_data *data,
         break;
     case HELP:
         usage(stdout, argv[0]);
-        status = STATUS_SKIP;
-        break;
+        return STATUS_SKIP;
     case STR:
         *data->str = argv[index + 1];
         break;
@@ -117,11 +115,10 @@ static status_t set_flag(const struct argument_data *data,
         verified =
             verify_number(argv[index + 1], data->num.min, data->num.max);
         if (verified < 0) {
-            CREATE_STATUS_ERR(status,
+            return create_status_err(
                     "invaild number '%s' for flag '%s' (min: %d, max: %d)",
                     argv[index + 1], argv[index], data->num.min,
                     data->num.max);
-            return status;
         }
 
         *(data->num.field) = verified;
@@ -130,29 +127,24 @@ static status_t set_flag(const struct argument_data *data,
         ASSERT(0 && "unreachable");
         break;
     }
-    return status;
+    return STATUS_NORMAL;
 }
 
 status_t handle_flag(int *pos, int argc, char *argv[], settings_t *settings) {
     const int idx = *pos;
     int args_needed = 0, additional_args = 0;
 
-    status_t status = STATUS_NORMAL;
     struct argument_data data = {0};
 
     args_needed = argument_data_from_flag(settings, argv[idx][1], &data);
     if (args_needed < 0) {
         usage(stderr, argv[0]);
-        CREATE_STATUS_ERR(status,
-                "unknown flag: '%s'\n", argv[idx]);
-        return status;
+        return create_status_err("unknown flag: '%s'\n", argv[idx]);
     }
 
     additional_args = ensure_args(args_needed, argc, idx);
     if (additional_args < 0) {
-        CREATE_STATUS_ERR(status,
-                "argument required for flag '%s'", argv[idx]);
-        return status;
+        return create_status_err("argument required for flag '%s'", argv[idx]);
     }
 
     *pos += additional_args + 1;

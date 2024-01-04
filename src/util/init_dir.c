@@ -2,6 +2,7 @@
 
 #include "util/error_handling.h"
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <limits.h>
 #include <dirent.h>

@@ -16,11 +16,11 @@ int report_errors(status_t s) {
     }
 
     if (IS_FATAL_ERR(s)) {
-        WARNING("fatal memory error! you need more RAM!!");
+        fprintf(stderr, "fatal memory error! you need more RAM!!");
         return EXIT_FAILURE;
     }
 
-    WARNING("%s", s.description);
+    fprintf(stderr, "%s", s.description);
     free(s.description);
     return EXIT_FAILURE;
 }
@@ -35,13 +35,13 @@ int main(int argc, char *argv[]) {
     status_t outcome = STATUS_NORMAL;
 
     if (argc < 2) {
-        WARNING("%s requires at least one argument\n", argv[0]);
+        fprintf(stderr, "%s requires at least one argument\n", argv[0]);
         return EXIT_FAILURE;
     }
 
     /* get the path the program was started in */
     if (!getcwd(starting_path, PATH_MAX)) {
-        WARNING("could not get the current directory");
+        fprintf(stderr, "could not get the current directory");
         return EXIT_FAILURE;
     };
 

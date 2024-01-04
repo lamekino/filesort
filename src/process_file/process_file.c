@@ -34,12 +34,9 @@ status_t process_file(const settings_t *settings,
     struct stat stat_info;
     char *rename_buffer = NULL;
     int rename_gives;
-    status_t status;
 
     if (stat(filename, &stat_info) < 0) {
-        CREATE_STATUS_ERR(status,
-                "could not stat file '%s'", filename);
-        return status;
+        return create_status_err("could not stat file '%s'", filename);
     }
 
     /* if using recursion, don't rename the directory but process the files */
@@ -56,9 +53,8 @@ status_t process_file(const settings_t *settings,
 
     rename_buffer = malloc(len);
     if (rename_buffer == NULL) {
-        CREATE_STATUS_ERR(status,
+        return create_status_err(
                 "could not allocate space for renamed at file '%s'", filename);
-        return status;
     }
 
     get_new_filename(rename_buffer, len, settings, &info);

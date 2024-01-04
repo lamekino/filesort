@@ -1,12 +1,13 @@
 #include "apply_settings/applications.h"
 
+#include "util/error_handling.h"
 #include "util/settings.h"
 
 #define TMP_VALUE_CHANGE_ME (size_t) 128
 
 static status_t chdir_parent_of_file(const char *filepath) {
     (void) filepath;
-    UNIMPLEMENTED;
+    return STATUS_FAILED;
 }
 
 status_t run_on_files(const settings_t *settings,
@@ -31,5 +32,5 @@ status_t run_on_files(const settings_t *settings,
     (void) number_of_files;
     (void) starting_path;
     (void) file_list;
-    UNIMPLEMENTED;
+    return STATUS_FAILED;
 }
