@@ -1,11 +1,11 @@
-#include "util/init_dir.h"
-
-#include "util/error_handling.h"
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
 #include <dirent.h>
+
+#include "init_dir.h"
+#include "error_handling.h"
 
 int init_dir(const char *relative_path, DIR **dir_p) {
     size_t new_filename_len = 0;

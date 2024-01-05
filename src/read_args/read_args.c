@@ -1,8 +1,8 @@
-#include "read_args/read_args.h"
-#include "read_args/handle_flag.h"
+#include "read_args.h"
+#include "error_handling.h"
+#include "settings.h"
 
-#include "util/error_handling.h"
-#include "util/settings.h"
+#include "read_args/handle_flag.h"
 
 #include <stdio.h>
 #include <stdlib.h>

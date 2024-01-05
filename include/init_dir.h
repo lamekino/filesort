@@ -1,6 +1,6 @@
-#ifndef __INIT_DIR_H
-#define __INIT_DIR_H
+#ifndef INIT_DIR_H
+#define INIT_DIR_H
 #include <dirent.h>
 
 int init_dir(const char *relative_path, DIR **dir_p);
-#endif
+#endif /* INIT_DIR_H */

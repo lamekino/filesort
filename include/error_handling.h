@@ -1,5 +1,5 @@
-#ifndef __ERROR_HANDLING_H
-#define __ERROR_HANDLING_H
+#ifndef ERROR_HANDLING_H
+#define ERROR_HANDLING_H
 
 #define STATIC_ASSERT(COND,MSG) typedef char static_assertion_##MSG[(COND)?1:-1]
 
@@ -42,4 +42,4 @@ typedef union {
 
 status_t create_status_err(const char *fmt, ...);
 
-#endif
+#endif /* ERROR_HANDLING_H */

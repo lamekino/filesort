@@ -1,19 +1,16 @@
-#include "process_file/process_file.h"
-
-#include "process_file/get_new_filename.h"
-#include "process_file/recurse_directory.h"
-#include "process_file/file_info.h"
-#include "process_directory/process_directory.h"
-#include "util/str_append.h"
-#include "util/error_handling.h"
-#include "util/init_dir.h"
-#include "util/settings.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#include "process_file.h"
+#include "process_file/get_new_filename.h"
+#include "process_file/recurse_directory.h"
+#include "process_file/file_info.h"
+
+#include "error_handling.h"
+#include "settings.h"
 
 static int rename_wrapper(const settings_t *settings,
                           const char *src,

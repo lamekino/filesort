@@ -1,6 +1,8 @@
 #include "read_args/parse_flag.h"
-#include "apply_settings/applications.h"
-#include "operations/operations.h"
+
+#include "applications.h"
+#include "operations.h"
+
 
 /* NOTE: placeholders */
 #define MIN_THREADS 1u
@@ -12,8 +14,8 @@ static int set_num(void *field, int min, int max,
                    struct argument_meta *data) {
     data->type = NUM;
     data->num = (struct number_argument) {
-        .max = MAX_THREADS,
-        .min = MIN_THREADS,
+        .max = max,
+        .min = min,
         .field = field
     };
 

@@ -1,9 +1,9 @@
-#include "util/error_handling.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+
+#include "error_handling.h"
 
 status_t create_status_err(const char *fmt, ...) {
     va_list args;

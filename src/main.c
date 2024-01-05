@@ -1,16 +1,17 @@
-#include "read_args/read_args.h"
-#include "apply_settings/apply_settings.h"
-
-#include "util/error_handling.h"
-#include "util/init_dir.h"
-#include "util/settings.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
 
+#include "read_args.h"
+#include "apply_settings.h"
+#include "error_handling.h"
+#include "settings.h"
+
+/*
+ * TODO: factor out of main.c
+ */
 int report_errors(const status_t *s) {
     if (!HAS_ERROR(*s)) {
         return EXIT_SUCCESS;

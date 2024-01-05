@@ -1,10 +1,10 @@
-#include "apply_settings/applications.h"
+#include "applications.h"
 
-#include "util/settings.h"
-#include "util/error_handling.h"
-#include "util/init_dir.h"
-#include "process_directory/process_directory.h"
-#include "process_file/process_file.h"
+#include "settings.h"
+#include "error_handling.h"
+#include "init_dir.h"
+#include "process_directory.h"
+#include "process_file.h"
 
 #include <dirent.h>
 #include <stdlib.h>

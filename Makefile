@@ -1,5 +1,6 @@
 PROG_NAME = filesort
 OBJ_DIR = ./obj
+INC_DIR = ./include
 SRC_DIR = ./src
 
 ifeq ($(PREFIX),)
@@ -7,7 +8,7 @@ ifeq ($(PREFIX),)
 endif
 
 CC = gcc
-INCLUDE = -I$(SRC_DIR)
+INCLUDE = -I$(INC_DIR)
 
 ifeq ($(DEBUG),1)
 	CCFLAGS = \

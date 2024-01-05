@@ -1,6 +1,6 @@
 #ifndef PARSE_FLAG_H
 #define PARSE_FLAG_H
-#include "util/settings.h"
+#include "settings.h"
 
 #define ARGUMENT_XMAP(X) \
     X(FLAG_HELP, 'h', \

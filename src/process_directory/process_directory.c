@@ -1,8 +1,8 @@
-#include "process_directory/process_directory.h"
+#include "process_directory.h"
 
-#include "util/error_handling.h"
-#include "util/settings.h"
-#include "process_file/process_file.h"
+#include "error_handling.h"
+#include "settings.h"
+#include "process_file.h"
 
 #include <stdio.h>
 #include <stdlib.h>

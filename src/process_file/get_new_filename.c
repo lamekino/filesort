@@ -1,12 +1,12 @@
 #include "process_file/get_new_filename.h"
 
-#include "process_file/file_info.h"
-#include "util/error_handling.h"
-#include "util/str_append.h"
-#include "util/settings.h"
-
 #include <stdbool.h>
 #include <unistd.h>
+
+#include "error_handling.h"
+#include "str_append.h"
+#include "settings.h"
+#include "process_file/file_info.h"
 
 #define MAX_DUPLICATES 128u
 

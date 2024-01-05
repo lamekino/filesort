@@ -1,7 +1,7 @@
+#include <stdio.h>
+
 #include "read_args/usage.h"
 #include "read_args/parse_flag.h"
-
-#include <stdio.h>
 
 void usage(FILE *stream, const char *progname) {
     fprintf(stream, "usage:\n");

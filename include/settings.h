@@ -1,8 +1,8 @@
-#ifndef __SETTINGS_H
-#define __SETTINGS_H
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
-#include "util/error_handling.h"
 #include <stdlib.h>
+#include "error_handling.h"
 
 struct settings;
 
@@ -31,4 +31,4 @@ typedef struct settings {
     applicator_f run;
 } settings_t;
 
-#endif
+#endif /* SETTINGS_H */

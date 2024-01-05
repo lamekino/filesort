@@ -1,5 +1,5 @@
-#ifndef __STR_APPEND_H
-#define __STR_APPEND_H
+#ifndef STR_APPEND_H
+#define STR_APPEND_H
 
 #include <stddef.h>
 
@@ -8,4 +8,4 @@ int str_append(char *buffer,
                const size_t max_len,
                const char *fmt, ...);
 
-#endif
+#endif /* STR_APPEND_H */

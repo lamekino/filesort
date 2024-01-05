@@ -1,8 +1,8 @@
-#include "apply_settings/apply_settings.h"
+#include "apply_settings.h"
+#include "applications.h"
 
-#include "apply_settings/applications.h"
-#include "util/settings.h"
-#include "util/error_handling.h"
+#include "settings.h"
+#include "error_handling.h"
 
 status_t apply_settings(const settings_t *settings,
                         const int number_of_files,

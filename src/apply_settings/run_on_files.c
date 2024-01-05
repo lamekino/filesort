@@ -1,7 +1,7 @@
-#include "apply_settings/applications.h"
+#include "applications.h"
 
-#include "util/error_handling.h"
-#include "util/settings.h"
+#include "error_handling.h"
+#include "settings.h"
 
 #define TMP_VALUE_CHANGE_ME (size_t) 128
 

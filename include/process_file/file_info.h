@@ -1,7 +1,7 @@
-#ifndef __FILE_INFO_H
-#define __FILE_INFO_H
-#include "util/settings.h"
+#ifndef FILE_INFO_H
+#define FILE_INFO_H
 #include <time.h>
+#include "settings.h"
 
 struct file_info {
     int num_duplicates;
@@ -10,4 +10,4 @@ struct file_info {
     const char *filename;
 };
 
-#endif
+#endif /* FILE_INFO_H */

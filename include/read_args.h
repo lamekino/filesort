@@ -1,8 +1,8 @@
-#ifndef __READ_ARGS_H
-#define __READ_ARGS_H
+#ifndef READ_ARGS_H
+#define READ_ARGS_H
 
-#include "util/error_handling.h"
-#include "util/settings.h"
+#include "error_handling.h"
+#include "settings.h"
 
 status_t read_args(size_t *number_of_files,
                    char ***file_list,
@@ -10,4 +10,4 @@ status_t read_args(size_t *number_of_files,
                    int argc,
                    char *argv[]);
 
-#endif
+#endif /* READ_ARGS_H */

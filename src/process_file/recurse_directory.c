@@ -1,12 +1,14 @@
-#include "util/settings.h"
-#include "util/init_dir.h"
-#include "process_directory/process_directory.h"
+#include "process_file/recurse_directory.h"
 
 #include <stdio.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#include "settings.h"
+#include "init_dir.h"
+#include "process_directory.h"
 
 int recurse_directory(const settings_t *settings,
                       const char *filename,
