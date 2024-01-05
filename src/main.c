@@ -7,29 +7,41 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <limits.h>
 
-int report_errors(status_t s) {
-    if (!HAS_ERROR(s)) {
+int report_errors(const status_t *s) {
+    if (!HAS_ERROR(*s)) {
         return EXIT_SUCCESS;
     }
 
-    if (IS_FATAL_ERR(s)) {
-        fprintf(stderr, "fatal memory error! you need more RAM!!");
+    if (IS_FATAL_ERR(*s)) {
+        fprintf(stderr, "fatal memory error! you need more RAM!!\n");
         return EXIT_FAILURE;
     }
 
-    fprintf(stderr, "%s", s.description);
-    free(s.description);
+    if (s->description != NULL) {
+        fprintf(stderr, "%s\n", s->description);
+        free(s->description);
+    }
+
+    /* NOTE: s->description and s->errno are mutually exclusive right now */
+    /* TODO: rename status_t to union status */
+#if 0
+    if (s->errno > 0) {
+        fprintf(stderr, "errno(%d): %s\n", s->errno, strerror(s->errno));
+    }
+#endif
+
     return EXIT_FAILURE;
 }
 
 int main(int argc, char *argv[]) {
     char starting_path[PATH_MAX + 1];
 
-    int number_of_files = 0;
-    char **files_to_process = NULL;
+    size_t number_of_files = 0;
+    char **file_list = NULL;
 
     settings_t settings = {0};
     status_t outcome = STATUS_NORMAL;
@@ -46,13 +58,13 @@ int main(int argc, char *argv[]) {
     };
 
     outcome =
-        read_args(&number_of_files, &files_to_process, &settings, argc, argv);
+        read_args(&number_of_files, &file_list, &settings, argc, argv);
     if (IS_NORMAL(outcome)) {
         outcome =
             apply_settings(&settings, number_of_files, starting_path,
-                    files_to_process);
+                    file_list);
     }
 
-    free(files_to_process);
-    return report_errors(outcome);
+    free(file_list);
+    return report_errors(&outcome);
 }

@@ -8,41 +8,51 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
-status_t read_args(int *number_of_files,
+#define HAS_FLAG(xs, idx) ((xs)[(idx)][0] == '-')
+
+static status_t
+append_file_list(char ***dst, size_t *len, char *filename) {
+    char **resized = NULL;
+    const size_t idx = *len;
+
+    resized = realloc(*dst, (idx + 1) * sizeof(*dst));
+    if (resized == NULL) {
+        return STATUS_NO_MEM;
+    }
+
+    resized[idx] = filename;
+
+    *dst = resized;
+    *len += 1;
+
+    return STATUS_NORMAL;
+}
+
+
+
+status_t read_args(size_t *number_of_files,
                    char ***file_list,
                    settings_t *settings,
                    int argc,
                    char *argv[]) {
     status_t status = STATUS_NORMAL;
-    int file_count = 0;
     int adx = 1;
 
-    while (adx < argc) {
-        char **file_list_resize = NULL;
+    while (IS_NORMAL(status) && adx < argc) {
+        const bool SKIP_FLAGS =
+            settings->use_flag_terminator || !HAS_FLAG(argv, adx);
 
-        if (!settings->use_flag_terminator && argv[adx][0] == '-') {
+        if (!SKIP_FLAGS) {
             status = handle_flag(&adx, argc, argv, settings);
-            if (!IS_NORMAL(status)) {
-                return status;
-            }
             continue;
         }
 
-        file_count++;
-        file_list_resize = realloc(*file_list, file_count * sizeof(*file_list));
-
-        if (file_list_resize == NULL) {
-            return STATUS_NO_MEM;
-        }
-
-        /* set the value of the resized list and make the original pointer point
-         * to it */
-        file_list_resize[file_count - 1] = argv[adx++];
-        *file_list = file_list_resize;
+        status = append_file_list(file_list, number_of_files, argv[adx]);
+        adx++;
     }
 
-    *number_of_files = file_count;
     return status;
 }
