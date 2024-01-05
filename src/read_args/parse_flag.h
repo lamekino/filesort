@@ -1,6 +1,5 @@
-#ifndef __ARGUMENTS_H
-#define __ARGUMENTS_H
-#include "util/error_handling.h"
+#ifndef PARSE_FLAG_H
+#define PARSE_FLAG_H
 #include "util/settings.h"
 
 #define ARGUMENT_XMAP(X) \
@@ -56,4 +55,7 @@ struct argument_meta {
     };
 };
 
-#endif /* __ARGUMENTS_H */
+int parse_flag(settings_t *settings, char **argv, size_t idx,
+               struct argument_meta *data);
+
+#endif /* PARSE_FLAG_H */
