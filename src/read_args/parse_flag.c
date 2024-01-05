@@ -51,7 +51,7 @@ static int apply_flag(settings_t *settings, enum program_arguement arg,
     case FILE_FILENAME_APPEND:
         return set_str(&settings->appendix, data);
     case FLAG_DIR_AS_FILE:
-        return set_toggle(settings->run, &run_on_files);
+        return set_toggle(settings->apply, &run_on_files);
     case FLAG_CONFIRMATION:
         return set_toggle(settings->operation, &confirm_rename);
     case FLAG_COPY_FILES:
