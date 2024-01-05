@@ -14,18 +14,16 @@
 #define HAS_FLAG(xs, idx) ((xs)[(idx)][0] == '-')
 
 static status_t
-append_file_list(char ***dst, size_t *len, char *filename) {
-    char **resized = NULL;
+append_file_list(char ***list, size_t *len, char *filename) {
     const size_t idx = *len;
+    char **resized = realloc(*list, (idx + 1) * sizeof(*list));
 
-    resized = realloc(*dst, (idx + 1) * sizeof(*dst));
     if (resized == NULL) {
         return STATUS_NO_MEM;
     }
-
     resized[idx] = filename;
 
-    *dst = resized;
+    *list = resized;
     *len += 1;
 
     return STATUS_NORMAL;
