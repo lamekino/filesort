@@ -28,7 +28,7 @@
         "stop looking for flags, treats following arguments strictly as "\
         "filenames")
 
-enum program_arguements {
+enum program_arguement {
     #define ENUMERATE(label, flag, _) label = flag,
         ARGUMENT_XMAP(ENUMERATE)
     #undef ENUMERATE
@@ -48,7 +48,7 @@ struct number_argument {
     int *field;
 };
 
-struct argument_data {
+struct argument_meta {
     enum argument_type type;
     union {
         struct number_argument num;

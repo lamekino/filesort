@@ -13,12 +13,68 @@
 #define MIN_THREADS 1u
 #define MAX_THREADS 32u
 
-static int ensure_args(int num_needed, int total, int pos) {
-    if (num_needed + pos >= total) {
-        return -1;
+#define set_toggle(a, b) ((a) = (b)), 0
+
+static int set_num(void *field, int min, int max,
+                    struct argument_meta *data) {
+    data->type = NUM;
+    data->num = (struct number_argument) {
+        .max = MAX_THREADS,
+        .min = MIN_THREADS,
+        .field = field
+    };
+
+    return 1;
+}
+
+static int set_str(char **field, struct argument_meta *data) {
+    data->type = STR;
+    data->str = field;
+
+    return 1;
+}
+
+static enum program_arguement resolve_arguemnt(char flag) {
+    switch (flag) {
+    #define CASE(label, ch, _) case ch: return label;
+        ARGUMENT_XMAP(CASE)
+    #undef CASE
     }
 
-    return num_needed;
+    return -1;
+}
+
+static int argument_data_from_flag(settings_t *settings, char *argv[],
+        size_t idx, struct argument_meta *data) {
+    const enum program_arguement arg = resolve_arguemnt(argv[idx][1]);
+
+    switch (arg) {
+    case FLAG_THREAD_NUM:
+        return set_num(&settings->num_threads, MIN_THREADS, MAX_THREADS, data);
+    case FLAG_FILENAME_PREFIX:
+        return set_str(&settings->prefix, data);
+    case FLAG_FILENAME_SUFFIX:
+        return set_str(&settings->suffix, data);
+    case FILE_FILENAME_APPEND:
+        return set_str(&settings->appendix, data);
+    case FLAG_DIR_AS_FILE:
+        return set_toggle(settings->run, &run_on_files);
+    case FLAG_CONFIRMATION:
+        return set_toggle(settings->operation, &confirm_rename);
+    case FLAG_COPY_FILES:
+        return set_toggle(settings->operation, &copy_file);
+    case FLAG_DRY_RUN:
+        return set_toggle(settings->operation, &dry_rename);
+    case FLAG_RECURSIVE:
+        return set_toggle(settings->use_recursion, 1);
+    case FLAG_TERMINATOR:
+        return set_toggle(settings->use_flag_terminator, 1);
+    case FLAG_HELP:
+        return set_toggle(data->type, HELP);
+    default:
+        ASSERT((arg < 0 || arg >= NUM_FLAGS) && "missing implementation");
+        return -1;
+    }
 }
 
 static int verify_number(char *s, int min, int max) {
@@ -31,75 +87,9 @@ static int verify_number(char *s, int min, int max) {
     return n;
 }
 
-static enum program_arguements resolve_arguemnt(char flag) {
-    switch (flag) {
-    #define CASE(label, ch, _) case ch: return label;
-        ARGUMENT_XMAP(CASE)
-    #undef CASE
-    }
-
-    return -1;
-}
-
-static int argument_data_from_flag(settings_t *settings, char flag,
-        struct argument_data *data) {
-    int args_needed = 0;
-
-    switch (resolve_arguemnt(flag)) {
-    case FLAG_THREAD_NUM:
-        args_needed = 1;
-        data->type = NUM;
-        data->num = (struct number_argument) {
-            .max = MAX_THREADS,
-            .min = MIN_THREADS,
-            .field = (int *) &(settings->num_threads)
-        };
-        break;
-    case FLAG_FILENAME_PREFIX:
-        args_needed = 1;
-        data->type = STR;
-        data->str = &(settings->prefix);
-        break;
-    case FLAG_FILENAME_SUFFIX:
-        args_needed = 1;
-        data->type = STR;
-        data->str = &(settings->suffix);
-        break;
-    case FILE_FILENAME_APPEND:
-        args_needed = 1;
-        data->type = STR;
-        data->str = &(settings->appendix);
-        break;
-    case FLAG_DIR_AS_FILE:
-        settings->run = &run_on_files;
-        break;
-    case FLAG_CONFIRMATION:
-        settings->operation = &confirm_rename;
-        break;
-    case FLAG_COPY_FILES:
-        settings->operation = &copy_file;
-        break;
-    case FLAG_DRY_RUN:
-        settings->operation = &dry_rename;
-        break;
-    case FLAG_RECURSIVE:
-        settings->use_recursion = 1;
-        break;
-    case FLAG_TERMINATOR:
-        settings->use_flag_terminator = 1;
-        break;
-    case FLAG_HELP:
-        data->type = HELP;
-        break;
-    default:
-        return -1;
-    }
-
-    return args_needed;
-}
-
-static status_t set_flag(const struct argument_data *data,
-        char *argv[], int index) {
+static status_t set_flag(const struct argument_meta *data,
+        char *argv[], int index, size_t param_count) {
+    (void) param_count;
     int verified = 0;
 
     switch (data->type) {
@@ -132,21 +122,18 @@ static status_t set_flag(const struct argument_data *data,
 
 status_t handle_flag(int *pos, int argc, char *argv[], settings_t *settings) {
     const int idx = *pos;
-    int args_needed = 0, additional_args = 0;
+    struct argument_meta data = {0};
+    int args_needed = argument_data_from_flag(settings, argv, idx, &data);
 
-    struct argument_data data = {0};
-
-    args_needed = argument_data_from_flag(settings, argv[idx][1], &data);
     if (args_needed < 0) {
         usage(stderr, argv[0]);
         return create_status_err("unknown flag: '%s'\n", argv[idx]);
     }
 
-    additional_args = ensure_args(args_needed, argc, idx);
-    if (additional_args < 0) {
+    if (idx + args_needed >= argc) {
         return create_status_err("argument required for flag '%s'", argv[idx]);
     }
 
-    *pos += additional_args + 1;
-    return set_flag(&data, argv, idx);
+    *pos += args_needed + 1;
+    return set_flag(&data, argv, idx, args_needed);
 }
