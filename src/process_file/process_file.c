@@ -53,16 +53,15 @@ status_t process_file(const settings_t *settings,
 
     rename_buffer = malloc(len);
     if (rename_buffer == NULL) {
-        return create_status_err(
-                "could not allocate space for renamed at file '%s'", filename);
+        return STATUS_NO_MEM;
     }
 
     get_new_filename(rename_buffer, len, settings, &info);
-    rename_gives = rename_wrapper(settings, info.filename, rename_buffer);
+    rename_gives = rename_wrapper(settings, filename, rename_buffer);
     free(rename_buffer);
 
     if (rename_gives < 0) {
-        return STATUS_FAILED;
+        return create_status_err("rename failed for filename '%s'", filename);
     }
 
     return STATUS_NORMAL;

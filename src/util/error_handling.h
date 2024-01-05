@@ -13,13 +13,17 @@
 #define END_ENUM(name) name##_END
 
 typedef union {
-    enum {
-        NORMAL,
-        SKIP,
-        FAILED,
-        FATAL_NO_MEM,
-        END_ENUM(status_t)
-    } id;
+    struct {
+        enum {
+            NORMAL,
+            SKIP,
+            FAILED,
+            FATAL_NO_MEM,
+            END_STATUSES
+        } id;
+        /* TODO: */
+        int errno;
+    };
     char *description;
 } status_t;
 
@@ -30,7 +34,7 @@ typedef union {
 #define STATUS_FAILED ((status_t) { .id = FAILED })
 #define STATUS_NO_MEM ((status_t) { .id = FATAL_NO_MEM })
 
-#define HAS_ERROR(s)     ((s).id >= END_ENUM(status_t))
+#define HAS_ERROR(s)     ((s).id >= END_STATUSES)
 #define IS_FATAL_ERR(s)  ((s).id == FATAL_NO_MEM)
 #define HAS_FAILED(s)    ((s).id == FAILED)
 #define IS_NORMAL(s)     ((s).id == NORMAL)
