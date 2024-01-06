@@ -44,6 +44,7 @@ status_t process_file(const settings_t *settings,
     /* set the known info about a file */
     info = (struct file_info) {
         .filename = filename,
+        .duplicates = 0,
         .creation_time = stat_info.st_ctime,
         .extension = strrchr(filename, '.')
     };
@@ -54,6 +55,10 @@ status_t process_file(const settings_t *settings,
     }
 
     get_new_filename(rename_buffer, len, settings, &info);
+    if (info.duplicates >= MAX_DUPLICATES) {
+        return create_status_err("hit duplicate cap for '%s'", filename);
+    }
+
     rename_gives = rename_wrapper(settings, filename, rename_buffer);
     free(rename_buffer);
 

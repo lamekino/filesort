@@ -4,7 +4,7 @@
 #include "settings.h"
 
 struct file_info {
-    int num_duplicates;
+    int duplicates;
     time_t creation_time;
     char *extension;
     const char *filename;
