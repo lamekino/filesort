@@ -1,6 +1,10 @@
 #ifndef PARSE_FLAG_H
 #define PARSE_FLAG_H
+
 #include "settings.h"
+
+#define UNIMPLEMENTED_FLAG (-2)
+#define UNKNOWN_FLAG (-1)
 
 #define ARGUMENT_XMAP(X) \
     X(FLAG_HELP, 'h', \

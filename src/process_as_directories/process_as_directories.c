@@ -6,10 +6,10 @@
 #include <limits.h>
 #include <sys/stat.h>
 
+#include "types/file_info.h"
 #include "error_handling.h"
 #include "operations.h"
 #include "settings.h"
-#include "process_file/file_info.h"
 #include "process_as_directories/multistack.h"
 #include "process_as_directories/generate_new_filenames.h"
 #include "process_as_directories/hash_info.h"

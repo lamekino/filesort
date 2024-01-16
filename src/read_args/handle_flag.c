@@ -57,6 +57,8 @@ status_t handle_flag(int *pos, int argc, char *argv[], settings_t *settings) {
     int args_needed = parse_flag(settings, argv, idx, &data);
 
     if (args_needed < 0) {
+        ASSERT(args_needed != UNIMPLEMENTED_FLAG);
+
         usage(stderr, argv[0]);
         return create_status_err("unknown flag: '%s'\n", argv[idx]);
     }

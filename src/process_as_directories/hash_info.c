@@ -1,5 +1,5 @@
 #include "process_as_directories/hash_info.h"
-#include "process_file/file_info.h"
+#include "types/file_info.h"
 
 /* http://www.cse.yorku.ca/~oz/hash.html */
 static unsigned long

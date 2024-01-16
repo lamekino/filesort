@@ -1,6 +1,6 @@
 #include "read_args/parse_flag.h"
 
-#include "applications.h"
+#include "error_handling.h"
 #include "operations.h"
 
 
@@ -43,7 +43,10 @@ static int apply_flag(settings_t *settings, enum program_arguement arg,
                       struct argument_meta *data) {
     switch (arg) {
     case FLAG_THREAD_NUM:
+#if 0
         return set_num(&settings->num_threads, MIN_THREADS, MAX_THREADS, data);
+#endif
+        return UNIMPLEMENTED_FLAG;
     case FLAG_FILENAME_PREFIX:
         return set_str(&settings->prefix, data);
     case FLAG_FILENAME_SUFFIX:
@@ -51,7 +54,7 @@ static int apply_flag(settings_t *settings, enum program_arguement arg,
     case FILE_FILENAME_APPEND:
         return set_str(&settings->appendix, data);
     case FLAG_DIR_AS_FILE:
-        return set_toggle(settings->apply, &run_on_files);
+        return UNIMPLEMENTED_FLAG;
     case FLAG_CONFIRMATION:
         return set_toggle(settings->operation, &confirm_rename);
     case FLAG_COPY_FILES:
@@ -65,8 +68,8 @@ static int apply_flag(settings_t *settings, enum program_arguement arg,
     case FLAG_HELP:
         return set_toggle(data->type, HELP);
     default:
-        ASSERT(arg >= NUM_FLAGS && "missing implementation");
-        return -1;
+        ASSERT(arg >= NUM_FLAGS && "missing flag case");
+        return UNKNOWN_FLAG;
     }
 }
 

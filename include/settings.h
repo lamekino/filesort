@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 #include "operations.h"
-#include "apply_settings.h"
 
 struct settings;
 
@@ -21,7 +20,6 @@ typedef struct settings {
     unsigned int use_flag_terminator:1;
 
     fileop_func operation;
-    apply_func apply;
 } settings_t;
 
 #endif /* SETTINGS_H */

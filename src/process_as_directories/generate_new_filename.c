@@ -1,5 +1,5 @@
 #include "process_as_directories/generate_new_filenames.h"
-#include "process_file/file_info.h"
+#include "types/file_info.h"
 #include "str_append.h"
 
 size_t
