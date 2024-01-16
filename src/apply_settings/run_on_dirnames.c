@@ -24,6 +24,7 @@ status_t run_on_dirnames(const settings_t *settings,
     for (idx = 0; !HAS_ERROR(status) && idx < number_of_files; idx++) {
         DIR *dir = NULL;
         int new_filename_len = init_dir(file_list[idx], &dir);
+        /* NOTE: why min filename??? */
         if (new_filename_len >= FNAME_MIN) {
             status = process_directory(settings, dir, new_filename_len);
         }

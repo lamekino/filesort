@@ -5,7 +5,7 @@
 #include <limits.h>
 
 #include "read_args.h"
-#include "apply_settings.h"
+#include "process_as_directories.h"
 #include "error_handling.h"
 #include "settings.h"
 
@@ -61,9 +61,7 @@ int main(int argc, char *argv[]) {
     outcome =
         read_args(&number_of_files, &file_list, &settings, argc, argv);
     if (IS_NORMAL(outcome)) {
-        outcome =
-            apply_settings(&settings, number_of_files, starting_path,
-                    file_list);
+        outcome = process_as_directories(&settings, file_list, number_of_files);
     }
 
     free(file_list);
