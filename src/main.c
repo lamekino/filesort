@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     char **file_list = NULL;
 
     struct settings settings = {0};
-    union error level = STATUS_NORMAL;
+    union error level = NO_ERROR;
 
     if (argc < 2) {
         fprintf(stderr, "%s requires at least one argument\n", argv[0]);
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     };
 
     level = read_args(&number_of_files, &file_list, &settings, argc, argv);
-    if (IS_NORMAL(level)) {
+    if (IS_OK(level)) {
         level = process_as_directories(&settings, file_list, number_of_files);
     }
 

@@ -30,7 +30,7 @@ set_flag(const struct argument_meta *data,
         break;
     case HELP:
         usage(stdout, argv[0]);
-        return STATUS_SKIP;
+        return ERROR(LEVEL_SKIP);
     case STR:
         *data->str = argv[index + 1];
         break;
@@ -38,7 +38,7 @@ set_flag(const struct argument_meta *data,
         verified =
             verify_number(argv[index + 1], data->num.min, data->num.max);
         if (verified < 0) {
-            return create_status_err(
+            return create_fatal_err(
                     "invaild number '%s' for flag '%s' (min: %d, max: %d)",
                     argv[index + 1], argv[index], data->num.min,
                     data->num.max);
@@ -50,7 +50,7 @@ set_flag(const struct argument_meta *data,
         ASSERT(0 && "unreachable");
         break;
     }
-    return STATUS_NORMAL;
+    return NO_ERROR;
 }
 
 
@@ -64,11 +64,11 @@ handle_flag(int *pos, int argc, char *argv[], struct settings *settings) {
         ASSERT(args_needed != UNIMPLEMENTED_FLAG);
 
         usage(stderr, argv[0]);
-        return create_status_err("unknown flag: '%s'\n", argv[idx]);
+        return create_fatal_err("unknown flag: '%s'\n", argv[idx]);
     }
 
     if (idx + args_needed >= argc) {
-        return create_status_err("argument required for flag '%s'", argv[idx]);
+        return create_fatal_err("argument required for flag '%s'", argv[idx]);
     }
 
     *pos += args_needed + 1;

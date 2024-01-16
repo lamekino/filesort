@@ -11,34 +11,33 @@
 #define ASSERT(_)
 #endif /* DEBUG */
 
+enum error_level {
+    LEVEL_NONE,
+    LEVEL_SKIP,
+    LEVEL_FAILED,
+    LEVEL_NO_MEM,
+    LEVEL_END
+};
+
 union error {
     struct {
-        enum {
-            NORMAL,
-            SKIP,
-            FAILED,
-            FATAL_NO_MEM,
-            END_STATUSES
-        } id;
+        enum error_level id;
     };
     char *description;
 };
 
-#define STATUS_ERR_BUF_SIZE 256
+#define ERR_BUF_SIZE 256
 
-#define STATUS_NORMAL ((union error) {0})
-#define STATUS_SKIP   ((union error) { .id = SKIP })
-#define STATUS_FAILED ((union error) { .id = FAILED })
-#define STATUS_NO_MEM ((union error) { .id = FATAL_NO_MEM })
+#define NO_ERROR ((union error) { .id = LEVEL_NONE })
+#define ERROR_NO_MEM ((union error) { .id = LEVEL_NO_MEM })
+#define ERROR(lvl) ((union error) { .id = (lvl) })
 
-#define HAS_ERROR(s)     ((s).id >= END_STATUSES)
-#define IS_FATAL_ERR(s)  ((s).id == FATAL_NO_MEM)
-#define HAS_FAILED(s)    ((s).id == FAILED)
-#define IS_NORMAL(s)     ((s).id == NORMAL)
-#define IS_SKIPPED(s)    ((s).id == SKIP)
+#define HAS_ERROR(s) ((s).id > LEVEL_END)
+#define IS_OK(s) ((s).id == LEVEL_NONE)
+#define IS_LEVEL(s, lvl) ((s).id == (lvl))
 
 union error
-create_status_err(const char *fmt, ...);
+create_fatal_err(const char *fmt, ...);
 
 int
 report_error(const union error *);

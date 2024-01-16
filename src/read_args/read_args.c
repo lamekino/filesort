@@ -16,14 +16,14 @@ append_file_list(char ***list, size_t *len, char *filename) {
     char **resized = realloc(*list, (idx + 1) * sizeof(*list));
 
     if (resized == NULL) {
-        return STATUS_NO_MEM;
+        return ERROR_NO_MEM;
     }
     resized[idx] = filename;
 
     *list = resized;
     *len += 1;
 
-    return STATUS_NORMAL;
+    return NO_ERROR;
 }
 
 
@@ -31,21 +31,21 @@ append_file_list(char ***list, size_t *len, char *filename) {
 union error
 read_args(size_t *number_of_files, char ***file_list, struct settings *settings,
         int argc, char *argv[]) {
-    union error status = STATUS_NORMAL;
+    union error level = NO_ERROR;
     int adx = 1;
 
-    while (IS_NORMAL(status) && adx < argc) {
+    while (IS_OK(level) && adx < argc) {
         const bool SKIP_FLAGS =
             settings->use_flag_terminator || !HAS_FLAG(argv, adx);
 
         if (!SKIP_FLAGS) {
-            status = handle_flag(&adx, argc, argv, settings);
+            level = handle_flag(&adx, argc, argv, settings);
             continue;
         }
 
-        status = append_file_list(file_list, number_of_files, argv[adx]);
+        level = append_file_list(file_list, number_of_files, argv[adx]);
         adx++;
     }
 
-    return status;
+    return level;
 }

@@ -6,20 +6,20 @@
 #include "types/error.h"
 
 union error
-create_status_err(const char *fmt, ...) {
+create_fatal_err(const char *fmt, ...) {
     va_list args;
     char *dup = NULL;
-    char buf[STATUS_ERR_BUF_SIZE];
+    char buf[ERR_BUF_SIZE];
 
     va_start(args, fmt);
 
-    if (vsnprintf(buf, STATUS_ERR_BUF_SIZE, fmt, args) < 0) {
-        return STATUS_NO_MEM;
+    if (vsnprintf(buf, ERR_BUF_SIZE, fmt, args) < 0) {
+        return ERROR_NO_MEM;
     }
 
-    dup = strndup(buf, STATUS_ERR_BUF_SIZE);
+    dup = strndup(buf, ERR_BUF_SIZE);
     if (dup == NULL) {
-        return STATUS_NO_MEM;
+        return ERROR_NO_MEM;
     }
 
     va_end(args);
@@ -30,11 +30,11 @@ create_status_err(const char *fmt, ...) {
 
 int
 report_error(const union error *e) {
-    if (!HAS_ERROR(*e)) {
+    if (IS_OK(*e)) {
         return EXIT_SUCCESS;
     }
 
-    if (IS_FATAL_ERR(*e)) {
+    if (IS_LEVEL(*e, LEVEL_NO_MEM)) {
         fprintf(stderr, "fatal memory error! you need more RAM!!\n");
         return EXIT_FAILURE;
     }

@@ -53,10 +53,10 @@ collect_filenames(struct multistack *ms,
         closedir(dp);
     }
 
-    return STATUS_NORMAL;
+    return NO_ERROR;
 FAIL:
     if (dp) closedir(dp);
-    return STATUS_NO_MEM;
+    return ERROR_NO_MEM;
 }
 
 static int
@@ -99,30 +99,30 @@ apply_rename(const struct settings *settings, const char *dirname,
     }
 
     if (!path_concat(orig, sizeof(orig), dirname, filename)) {
-        return STATUS_NO_MEM;
+        return ERROR_NO_MEM;
     }
 
     if (get_info(&info, settings, orig) < 0) {
-        return create_status_err("could not get file info for: %s",
+        return create_fatal_err("could not get file info for: %s",
                 orig);
     }
 
     info.duplicates = hash_info(hash_table, HASH_SIZE, &info);
     if (!generate_new_filename(buf, sizeof(buf), &info)) {
-        return create_status_err("could not generate filename for: %s",
+        return create_fatal_err("could not generate filename for: %s",
                 orig);
     }
 
     if (!path_concat(renamed, sizeof(renamed), dirname, buf)) {
-        return STATUS_NO_MEM;
+        return ERROR_NO_MEM;
     }
 
     if (op(orig, renamed) < 0) {
-        return create_status_err("could not rename '%s' to '%s'",
+        return create_fatal_err("could not rename '%s' to '%s'",
                 orig, renamed);
     }
 
-    return STATUS_NORMAL;
+    return NO_ERROR;
 }
 
 static union error
@@ -134,28 +134,28 @@ rename_files(const struct settings *settings, struct multistack *contents) {
         int hash_table[HASH_SIZE] = {0};
 
         while ((filename = pop_member(dir))) {
-            union error status = apply_rename(settings, dir->name, filename,
+            union error level = apply_rename(settings, dir->name, filename,
                     hash_table, sizeof(hash_table));
-            if (!IS_NORMAL(status)) {
-                return status;
+            if (!IS_OK(level)) {
+                return level;
             }
         }
     }
 
-    return STATUS_NORMAL;
+    return NO_ERROR;
 }
 
 union error
 process_as_directories(const struct settings *settings, char **dirs,
         size_t len) {
     struct multistack files = {0};
-    union error status = STATUS_NORMAL;
+    union error level = NO_ERROR;
 
-    status = collect_filenames(&files, dirs, len);
-    if (IS_NORMAL(status)) {
-        status = rename_files(settings, &files);
+    level = collect_filenames(&files, dirs, len);
+    if (IS_OK(level)) {
+        level = rename_files(settings, &files);
     }
 
     cleanup_multistack(&files);
-    return status;
+    return level;
 }
