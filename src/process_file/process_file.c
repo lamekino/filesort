@@ -43,7 +43,6 @@ status_t process_file(const settings_t *settings,
 
     /* set the known info about a file */
     info = (struct file_info) {
-        .filename = filename,
         .duplicates = 0,
         .creation_time = stat_info.st_ctime,
         .extension = strrchr(filename, '.')
