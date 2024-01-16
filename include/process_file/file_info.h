@@ -7,7 +7,10 @@ struct file_info {
     int duplicates;
     time_t creation_time;
     char *extension;
-    const char *filename;
+
+    char *prefix;
+    char *suffix;
+    char *appendix;
 };
 
 #endif /* FILE_INFO_H */

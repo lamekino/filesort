@@ -12,14 +12,18 @@
 /* FIXME: this is not thread safe... */
 #define file_exists(filename) (access(filename, F_OK) != -1)
 
-static size_t get_possible_filename(char *buffer,
-                                    const size_t max_len,
-                                    const settings_t *settings,
-                                    const struct file_info *info) {
+size_t get_new_filename(char *buffer,
+        const size_t max_len,
+        const settings_t *settings,
+        const struct file_info *info) {
     size_t offset = 0;
 
     #define BUFFER_APPEND(...) \
-        offset += str_append(buffer, offset, max_len, __VA_ARGS__)
+        do { \
+            int y = str_append(buffer, offset, max_len, __VA_ARGS__); \
+            if (y < 0) return 0; \
+            offset += y; \
+        } while (0);
 
     /*
      * Do the pre- timestamp parts
@@ -51,23 +55,4 @@ static size_t get_possible_filename(char *buffer,
     #undef BUFFER_APPEND
 
     return offset;
-}
-
-size_t get_new_filename(char *dest,
-                        const size_t max_len,
-                        const settings_t *settings,
-                        struct file_info *info) {
-    size_t name_len = 0;
-    char buffer[128];
-
-    while (true) {
-        name_len =
-            get_possible_filename(buffer, sizeof(buffer), settings, info);
-
-        if (!file_exists(buffer)) break;
-        if (++info->duplicates >= MAX_DUPLICATES) break;
-    }
-
-    strncpy(dest, buffer, max_len);
-    return name_len;
 }
