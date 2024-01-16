@@ -1,11 +1,13 @@
 #ifndef PROCESS_AS_DIRECTORIES_H
 #define PROCESS_AS_DIRECTORIES_H
 
-#include "settings.h"
-#include "error_handling.h"
+#include "types/settings.h"
+#include "types/error.h"
 
-status_t
-process_as_directories(const settings_t *settings,
+#define PATH_LEN (PATH_MAX + 1)
+
+union error
+process_as_directories(const struct settings *settings,
         char **dirs, size_t len);
 
 #endif /* PROCESS_AS_DIRECTORIES_H */

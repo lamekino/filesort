@@ -1,6 +1,6 @@
 #include "read_args/parse_flag.h"
 
-#include "error_handling.h"
+#include "types/error.h"
 #include "operations.h"
 
 
@@ -39,8 +39,9 @@ static enum program_arguement resolve_arguemnt(char flag) {
     return -1;
 }
 
-static int apply_flag(settings_t *settings, enum program_arguement arg,
-                      struct argument_meta *data) {
+static int
+apply_flag(struct settings *settings, enum program_arguement arg,
+        struct argument_meta *data) {
     switch (arg) {
     case FLAG_THREAD_NUM:
 #if 0
@@ -73,8 +74,9 @@ static int apply_flag(settings_t *settings, enum program_arguement arg,
     }
 }
 
-int parse_flag(settings_t *settings, char **argv, size_t idx,
-               struct argument_meta *data) {
+int
+parse_flag(struct settings *settings, char **argv, size_t idx,
+        struct argument_meta *data) {
     /*
      * TODO: create support for --long-flags
      */

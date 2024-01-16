@@ -1,6 +1,6 @@
 #include "process_as_directories/generate_new_filenames.h"
 #include "types/file_info.h"
-#include "str_append.h"
+#include "types/strings.h"
 
 size_t
 generate_new_filename(char *dest, size_t max_len,

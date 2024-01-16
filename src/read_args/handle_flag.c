@@ -2,13 +2,14 @@
 
 #include <stdlib.h>
 
-#include "error_handling.h"
-#include "settings.h"
+#include "types/error.h"
+#include "types/settings.h"
 
 #include "read_args/parse_flag.h"
 #include "read_args/usage.h"
 
-static int verify_number(char *s, int min, int max) {
+static int
+verify_number(char *s, int min, int max) {
     int n = atoi(s);
 
     if (n == 0) return -1;
@@ -18,7 +19,8 @@ static int verify_number(char *s, int min, int max) {
     return n;
 }
 
-static status_t set_flag(const struct argument_meta *data,
+static union error
+set_flag(const struct argument_meta *data,
         char *argv[], int index, size_t param_count) {
     (void) param_count;
     int verified = 0;
@@ -51,7 +53,9 @@ static status_t set_flag(const struct argument_meta *data,
     return STATUS_NORMAL;
 }
 
-status_t handle_flag(int *pos, int argc, char *argv[], settings_t *settings) {
+
+union error
+handle_flag(int *pos, int argc, char *argv[], struct settings *settings) {
     const int idx = *pos;
     struct argument_meta data = {0};
     int args_needed = parse_flag(settings, argv, idx, &data);

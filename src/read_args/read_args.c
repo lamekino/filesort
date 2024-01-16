@@ -1,6 +1,6 @@
 #include "read_args.h"
-#include "error_handling.h"
-#include "settings.h"
+#include "types/error.h"
+#include "types/settings.h"
 
 #include "read_args/handle_flag.h"
 
@@ -11,7 +11,7 @@
 
 #define HAS_FLAG(xs, idx) ((xs)[(idx)][0] == '-')
 
-static status_t
+static union error
 append_file_list(char ***list, size_t *len, char *filename) {
     const size_t idx = *len;
     char **resized = realloc(*list, (idx + 1) * sizeof(*list));
@@ -29,12 +29,10 @@ append_file_list(char ***list, size_t *len, char *filename) {
 
 
 
-status_t read_args(size_t *number_of_files,
-                   char ***file_list,
-                   settings_t *settings,
-                   int argc,
-                   char *argv[]) {
-    status_t status = STATUS_NORMAL;
+union error
+read_args(size_t *number_of_files, char ***file_list, struct settings *settings,
+        int argc, char *argv[]) {
+    union error status = STATUS_NORMAL;
     int adx = 1;
 
     while (IS_NORMAL(status) && adx < argc) {

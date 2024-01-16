@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdarg.h>
 
-#include "str_append.h"
+#include "types/strings.h"
 
 int str_append(char *buffer,
                const size_t current_len,

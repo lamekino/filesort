@@ -9,7 +9,7 @@ struct settings;
 /*
  * FIXME: this is a god object
  */
-typedef struct settings {
+struct settings {
     size_t num_threads;
 
     char *prefix;
@@ -20,6 +20,6 @@ typedef struct settings {
     unsigned int use_flag_terminator:1;
 
     fileop_func operation;
-} settings_t;
+};
 
 #endif /* SETTINGS_H */

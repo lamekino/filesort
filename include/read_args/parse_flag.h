@@ -1,7 +1,7 @@
 #ifndef PARSE_FLAG_H
 #define PARSE_FLAG_H
 
-#include "settings.h"
+#include "types/settings.h"
 
 #define UNIMPLEMENTED_FLAG (-2)
 #define UNKNOWN_FLAG (-1)
@@ -59,7 +59,8 @@ struct argument_meta {
     };
 };
 
-int parse_flag(settings_t *settings, char **argv, size_t idx,
-               struct argument_meta *data);
+int
+parse_flag(struct settings *settings, char **argv, size_t idx,
+        struct argument_meta *data);
 
 #endif /* PARSE_FLAG_H */

@@ -7,16 +7,16 @@
 #include <sys/stat.h>
 
 #include "types/file_info.h"
-#include "error_handling.h"
+#include "types/error.h"
 #include "operations.h"
-#include "settings.h"
+#include "types/settings.h"
+#include "process_as_directories.h"
 #include "process_as_directories/multistack.h"
 #include "process_as_directories/generate_new_filenames.h"
 #include "process_as_directories/hash_info.h"
 
 #define HASH_SIZE 2048u
 #define NEW_FILENAME_SIZE 256u
-#define PATH_LEN (PATH_MAX + 1)
 
 /*
  * TODO: create filter options
@@ -27,7 +27,7 @@ is_filtered(const char *filename) {
     return filename[0] == '.';
 }
 
-static status_t
+static union error
 collect_filenames(struct multistack *ms,
         char **dir_list, size_t len) {
     size_t i;
@@ -61,7 +61,8 @@ FAIL:
 }
 
 static int
-get_info(struct file_info *dest, const settings_t *settings, const char *path) {
+get_info(struct file_info *dest, const struct settings *settings,
+        const char *path) {
     struct stat file_stat;
 
     if (stat(path, &file_stat) == 0) {
@@ -84,8 +85,8 @@ path_concat(char *dest, size_t max_len, const char *dirname,
     return snprintf(dest, max_len, "%s/%s", dirname, fname);
 }
 
-static status_t
-apply_rename(const settings_t *settings, const char *dirname,
+static union error
+apply_rename(const struct settings *settings, const char *dirname,
         const char *filename, int *hash_table, size_t hash_len) {
     struct file_info info = {0};
     char buf[256] = {0};
@@ -125,8 +126,8 @@ apply_rename(const settings_t *settings, const char *dirname,
     return STATUS_NORMAL;
 }
 
-static status_t
-rename_files(const settings_t *settings, struct multistack *contents) {
+static union error
+rename_files(const struct settings *settings, struct multistack *contents) {
     struct stack *dir = NULL;
     const char *filename = NULL;
 
@@ -134,7 +135,7 @@ rename_files(const settings_t *settings, struct multistack *contents) {
         int hash_table[HASH_SIZE] = {0};
 
         while ((filename = pop_member(dir))) {
-            status_t status = apply_rename(settings, dir->name, filename,
+            union error status = apply_rename(settings, dir->name, filename,
                     hash_table, sizeof(hash_table));
             if (!IS_NORMAL(status)) {
                 return status;
@@ -145,11 +146,11 @@ rename_files(const settings_t *settings, struct multistack *contents) {
     return STATUS_NORMAL;
 }
 
-status_t
-process_as_directories(const settings_t *settings,
-        char **dirs, size_t len) {
+union error
+process_as_directories(const struct settings *settings, char **dirs,
+        size_t len) {
     struct multistack files = {0};
-    status_t status = STATUS_NORMAL;
+    union error status = STATUS_NORMAL;
 
     status = collect_filenames(&files, dirs, len);
     if (IS_NORMAL(status)) {
