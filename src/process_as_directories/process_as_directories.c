@@ -35,9 +35,14 @@ collect_filenames(struct multistack *ms,
     for (i = 0; i < len; i++) {
         struct dirent *ent = NULL;
 
+        if (!push_name(ms, dir_list[i])) {
+            return ERROR_NO_MEM;
+        }
+
+        /* TODO: print warning, but continue */
         dp = opendir(dir_list[i]);
-        if (!dp || !push_name(ms, dir_list[i])) {
-            goto FAIL;
+        if (!dp) {
+            return create_fatal_err("could not open dir: '%s'", dir_list[i]);
         }
 
         while ((ent = readdir(dp))) {
@@ -46,7 +51,8 @@ collect_filenames(struct multistack *ms,
             }
 
             if (!push_member(ms, ent->d_name)) {
-                goto FAIL;
+                closedir(dp);
+                return ERROR_NO_MEM;
             }
         }
 
@@ -54,9 +60,6 @@ collect_filenames(struct multistack *ms,
     }
 
     return NO_ERROR;
-FAIL:
-    if (dp) closedir(dp);
-    return ERROR_NO_MEM;
 }
 
 static int
