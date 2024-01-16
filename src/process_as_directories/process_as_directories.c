@@ -110,7 +110,7 @@ apply_rename(const struct settings *settings, const char *dirname,
                 orig);
     }
 
-    info.duplicates = hash_info(hash_table, HASH_SIZE, &info);
+    info.duplicates = hash_info(hash_table, HASH_SIZE, &info) - 1;
     if (!generate_new_filename(buf, sizeof(buf), &info)) {
         return create_fatal_err("could not generate filename for: %s",
                 orig);
