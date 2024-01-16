@@ -3,8 +3,9 @@
 
 typedef int (*fileop_func)(const char *, const char *);
 
-int confirm_rename(const char *orig_name, const char *new_name);
-int copy_file(const char *src, const char *dest);
-int dry_rename(const char *src, const char *dest);
+int confirm_rename(const char *, const char *);
+int copy_file(const char *, const char *);
+int dry_rename(const char *, const char *);
+int default_rename(const char *, const char *);
 
 #endif /* OPERATIONS_H */
