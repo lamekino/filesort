@@ -5,9 +5,9 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include "ops/ops.h"
 #include "types/file_info.h"
 #include "types/error.h"
-#include "types/operations.h"
 #include "types/settings.h"
 #include "process_as_directories/process_as_directories.h"
 #include "process_as_directories/multistack.h"
