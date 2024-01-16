@@ -1,7 +1,7 @@
 #include "read_args/parse_flag.h"
 
 #include "types/error.h"
-#include "operations.h"
+#include "types/operations.h"
 
 
 /* NOTE: placeholders */

@@ -3,14 +3,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <limits.h>
 #include <sys/stat.h>
 
 #include "types/file_info.h"
 #include "types/error.h"
-#include "operations.h"
+#include "types/operations.h"
 #include "types/settings.h"
-#include "process_as_directories.h"
+#include "process_as_directories/process_as_directories.h"
 #include "process_as_directories/multistack.h"
 #include "process_as_directories/generate_new_filenames.h"
 #include "process_as_directories/hash_info.h"

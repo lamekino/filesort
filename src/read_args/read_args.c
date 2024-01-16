@@ -1,13 +1,12 @@
-#include "read_args.h"
-#include "types/error.h"
-#include "types/settings.h"
-
-#include "read_args/handle_flag.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+
+#include "read_args/read_args.h"
+#include "read_args/handle_flag.h"
+#include "types/error.h"
+#include "types/settings.h"
 
 #define HAS_FLAG(xs, idx) ((xs)[(idx)][0] == '-')
 

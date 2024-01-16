@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <limits.h>
 
-#include "read_args.h"
-#include "process_as_directories.h"
+#include "read_args/read_args.h"
+#include "process_as_directories/process_as_directories.h"
 #include "types/settings.h"
 #include "types/error.h"
 

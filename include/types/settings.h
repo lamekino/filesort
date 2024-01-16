@@ -2,7 +2,7 @@
 #define SETTINGS_H
 
 #include <stdlib.h>
-#include "operations.h"
+#include "types/operations.h"
 
 struct settings;
 
