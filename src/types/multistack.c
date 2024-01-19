@@ -14,20 +14,21 @@ push(void *p, size_t *length, size_t *capacity, size_t elem_size) {
     const size_t cur_cap = *capacity;
     const size_t new_len = *length + 1;
     const size_t new_cap = 2 * cur_cap + 1;
+
+    size_t set_cap = cur_cap;
     void *ys = p;
 
-    if (new_len > cur_cap) {
+    if (cur_cap > new_len) {
         ys = realloc(p,  new_cap * elem_size);
+        set_cap = new_cap;
     }
-
-    if (ys != NULL) {
-        *capacity = new_cap;
+    if (ys) {
         *length = new_len;
+        *capacity = set_cap;
     }
 
     return ys;
 }
-
 
 static struct stack *
 push_stack(struct multistack *ms, char *name, char **members,
