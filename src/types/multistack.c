@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <limits.h> /* PATH_MAX */
 
 #include "types/multistack.h"
 
@@ -54,7 +55,7 @@ push_stack(struct multistack *ms, char *name, char **members,
 struct stack *
 push_name(struct multistack *ms, char *name) {
     char **members = calloc(INITIAL_STACK_CAPACITY, sizeof(char **));
-    char *dup = strdup(name);
+    char *dup = strndup(name, PATH_MAX);
     struct stack *ys = push_stack(ms, dup, members, INITIAL_STACK_CAPACITY);
 
     if (!ys || !members || !dup) {
@@ -84,7 +85,7 @@ push_string(struct stack *xs, char *name) {
 char **
 push_member(struct multistack *ms, char *member_name) {
     struct stack *cur = &ms->base[ms->len - 1];
-    char *dup = strdup(member_name);
+    char *dup = strndup(member_name, NEW_FILENAME_SIZE);
     char **ys = push_string(cur, dup);
 
     if (!ys || !dup) {

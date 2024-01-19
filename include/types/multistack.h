@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#define NEW_FILENAME_SIZE 256u
+
 struct stack {
     char *name;
     char **members;
