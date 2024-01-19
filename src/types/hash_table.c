@@ -1,4 +1,4 @@
-#include "process_as_directories/hash_info.h"
+#include "types/hash_table.h"
 #include "types/file_info.h"
 
 /* http://www.cse.yorku.ca/~oz/hash.html */

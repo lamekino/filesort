@@ -3,9 +3,11 @@
 
 #include <stddef.h>
 
-int str_append(char *buffer,
-               const size_t current_len,
-               const size_t max_len,
-               const char *fmt, ...);
+int str_append(char *buffer, size_t current_len, size_t max_len,
+        const char *fmt, ...);
+
+size_t
+path_concat(char *dest, const char *dirname, const char *fname);
+
 
 #endif /* STR_APPEND_H */

@@ -47,6 +47,11 @@ int
 report_error(const union error *);
 
 #ifdef DEBUG
+#define UNIMPLEMENTED \
+    do { \
+        return create_fatal_err("%s: unimplemented", __FUNCTION__); \
+    } while (0);
+
 #define REPORT_MISSING_IMPL(e) \
     do { \
         if (!HAS_ERROR((e))) { \
@@ -55,7 +60,10 @@ report_error(const union error *);
         } \
     } while (0)
 #else
-#define REPORT_MISSING(_)
+#define UNIMPLEMENTED do { \
+        STATIC_ASSERT(0, unimplemented_func); \
+    } while (0);
+#define REPORT_MISSING_IMPL(_)
 #endif
 
 #endif /* ERROR_HANDLING_H */
