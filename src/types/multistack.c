@@ -2,10 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <sys/stat.h>
 
-#include "process_as_directories/multistack.h"
-
+#include "types/multistack.h"
 
 #define INITIAL_STACK_CAPACITY 15u
 #define SIZE_AT(p) (sizeof(*(p)))
@@ -127,8 +125,8 @@ cleanup_multistack(struct multistack *ms) {
     while (ms->capacity--) {
         struct stack *cur = &ms->base[ms->capacity];
 
-        while (cur->count--) {
-            free(cur->members[cur->count]);
+        while (cur->capacity--) {
+            free(cur->members[cur->capacity]);
         }
 
         free(cur->members);

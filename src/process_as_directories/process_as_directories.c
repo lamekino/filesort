@@ -9,8 +9,8 @@
 #include "types/file_info.h"
 #include "types/error.h"
 #include "types/settings.h"
+#include "types/multistack.h"
 #include "process_as_directories/process_as_directories.h"
-#include "process_as_directories/multistack.h"
 #include "process_as_directories/generate_new_filenames.h"
 #include "process_as_directories/hash_info.h"
 
@@ -27,13 +27,10 @@ is_filtered(const char *filename) {
 }
 
 static size_t
-path_concat(char *dest, size_t max_len, const char *dirname,
-        const char *fname) {
-    return snprintf(dest, max_len, "%s/%s", dirname, fname);
+path_concat(char *dest, const char *dirname, const char *fname) {
+    return snprintf(dest, PATH_LEN, "%s/%s", dirname, fname);
 }
 
-#define path_concat(dest, dirname, fname) \
-    (path_concat((dest), PATH_LEN, (dirname), (fname)) < 0)
 
 static union error
 collect_filenames(struct multistack *ms, char **dir_list, size_t len) {
@@ -67,7 +64,7 @@ collect_filenames(struct multistack *ms, char **dir_list, size_t len) {
         closedir(dp);
     }
 
-    return NO_ERROR;
+    return SUCCEED_LEVEL;
 }
 
 static union error
@@ -76,11 +73,11 @@ get_info(struct file_info *dest, const struct settings *settings,
     struct stat file_stat;
 
     if (stat(path, &file_stat) == -1) {
-        return ERROR(LEVEL_FAILED);
+        return FAILED_LEVEL;
     }
 
     if (S_ISDIR(file_stat.st_mode)) {
-        return ERROR(LEVEL_SPECIAL);
+        return SPECIAL_LEVEL;
     }
 
     dest->extension = strrchr(path, '.');
@@ -89,26 +86,36 @@ get_info(struct file_info *dest, const struct settings *settings,
     dest->prefix = settings->prefix;
     dest->suffix = settings->suffix;
     dest->appendix = settings->appendix;
-    return NO_ERROR;
+    return SUCCEED_LEVEL;
 }
 
 static union error
 apply_rename(const struct settings *settings, const char *basename,
         const char *filepath, int *hash_table, size_t hash_len) {
-    static union error level = NO_ERROR;
+    union error err = {0};
     struct file_info info = {0};
     char buf[NEW_FILENAME_SIZE] = {0};
 
     char renamed[PATH_LEN] = {0};
 
-    fileop_func op = settings->operation;
+    fileop op = settings->operation;
     if (op == NULL) {
         op = &default_rename;
     }
 
-    level = get_info(&info, settings, filepath);
-    if (!IS_OK(level)) {
-        return level;
+    err = get_info(&info, settings, filepath);
+    switch (err.level) {
+    case LEVEL_SUCCESS:
+        break;
+    case LEVEL_FAILED:
+        return SUCCEED_LEVEL; /* TODO: log skipping file bc stat */
+    case LEVEL_SPECIAL:
+        return SPECIAL_LEVEL;
+    case LEVEL_NO_MEM:
+        return ERROR_NO_MEM;
+    default:
+        REPORT_MISSING_IMPL(err);
+        return err;
     }
 
     info.duplicates = hash_info(hash_table, hash_len, &info);
@@ -128,7 +135,7 @@ apply_rename(const struct settings *settings, const char *basename,
                 filepath, renamed);
     }
 
-    return NO_ERROR;
+    return SUCCEED_LEVEL;
 }
 
 
@@ -145,23 +152,28 @@ rename_files(const struct settings *settings, struct multistack *contents) {
     while ((directory = pop_name(contents))) {
         while ((fname = pop_member(directory))) {
             const char *dir = directory->name;
-            union error level;
+            union error err;
 
             if (!path_concat(fullpath, dir, fname)) {
                 return ERROR_NO_MEM;
             }
 
-            level = apply_rename(settings, dir, fullpath, hash_table,
+            err = apply_rename(settings, dir, fullpath, hash_table,
                         sizeof(hash_table));
 
-            if (HAS_ERROR(level)) {
-                return level;
-            }
-
-            if (IS_LVL(level, LEVEL_SPECIAL)) {
+            switch (err.level) {
+            case LEVEL_SPECIAL:
                 if (!push_name(&recurse_dirs, fullpath)) {
                     return ERROR_NO_MEM;
                 }
+                /* fall through */
+            case LEVEL_SUCCESS:
+                break;
+            case LEVEL_NO_MEM:
+                return ERROR_NO_MEM;
+            default:
+                REPORT_MISSING_IMPL(err);
+                return err;
             }
         }
 
@@ -171,22 +183,22 @@ rename_files(const struct settings *settings, struct multistack *contents) {
     if (settings->use_recursion) {
         memcpy(contents, &recurse_dirs, sizeof(struct multistack));
     }
-    return NO_ERROR;
+    return SUCCEED_LEVEL;
 }
 
 union error
 process_as_directories(const struct settings *settings, char **dirs,
         size_t len) {
     struct multistack files = {0};
-    union error level = collect_filenames(&files, dirs, len);
+    union error err = collect_filenames(&files, dirs, len);
 
-    while (!HAS_ERROR(level) && !is_empty(&files)) {
-        level = rename_files(settings, &files);
-        if (!HAS_ERROR(level) && !is_empty(&files)) {
-            level = collect_filenames(&files, dirs, len);
+    while (!HAS_ERROR(err) && !is_empty(&files)) {
+        err = rename_files(settings, &files);
+        if (!HAS_ERROR(err) && !is_empty(&files)) {
+            err = collect_filenames(&files, dirs, len);
         }
     }
 
     cleanup_multistack(&files);
-    return level;
+    return err;
 }
