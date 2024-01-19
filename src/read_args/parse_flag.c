@@ -54,8 +54,6 @@ apply_flag(struct settings *settings, enum program_arguement arg,
         return set_str(&settings->suffix, data);
     case FILE_FILENAME_APPEND:
         return set_str(&settings->appendix, data);
-    case FLAG_DIR_AS_FILE:
-        return UNIMPLEMENTED_FLAG;
     case FLAG_CONFIRMATION:
         return set_toggle(settings->operation, &confirm_rename);
     case FLAG_COPY_FILES:
@@ -66,6 +64,8 @@ apply_flag(struct settings *settings, enum program_arguement arg,
         return set_toggle(settings->use_recursion, 1);
     case FLAG_TERMINATOR:
         return set_toggle(settings->use_flag_terminator, 1);
+    case FLAG_DIR_AS_FILE:
+        return set_toggle(data->type, USE_FILE);
     case FLAG_HELP:
         return set_toggle(data->type, HELP);
     default:
