@@ -34,7 +34,7 @@ report_error(const union error *e) {
         return EXIT_SUCCESS;
     }
 
-    if (IS_LEVEL(*e, LEVEL_NO_MEM)) {
+    if (IS_LVL(*e, LEVEL_NO_MEM)) {
         fprintf(stderr, "fatal memory error! you need more RAM!!\n");
         return EXIT_FAILURE;
     }

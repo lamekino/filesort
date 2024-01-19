@@ -15,14 +15,13 @@ enum error_level {
     LEVEL_NONE,
     LEVEL_SKIP,
     LEVEL_FAILED,
+    LEVEL_SPECIAL,
     LEVEL_NO_MEM,
     LEVEL_END
 };
 
 union error {
-    struct {
-        enum error_level id;
-    };
+    enum error_level id;
     char *description;
 };
 
@@ -34,7 +33,7 @@ union error {
 
 #define HAS_ERROR(s) ((s).id > LEVEL_END)
 #define IS_OK(s) ((s).id == LEVEL_NONE)
-#define IS_LEVEL(s, lvl) ((s).id == (lvl))
+#define IS_LVL(s, lvl) ((s).id == (lvl))
 
 union error
 create_fatal_err(const char *fmt, ...);
