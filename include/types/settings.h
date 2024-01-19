@@ -19,7 +19,7 @@ struct settings {
     unsigned int use_recursion:1;
     unsigned int use_flag_terminator:1;
 
-    fileop_func operation;
+    fileop operation;
 };
 
 #endif /* SETTINGS_H */
