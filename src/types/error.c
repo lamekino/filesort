@@ -5,15 +5,12 @@
 
 #include "types/error.h"
 
-union error
-create_fatal_err(const char *fmt, ...) {
-    va_list args;
+static union error
+va_create_fatal_err(const char *fmt, va_list ap) {
     char *dup = NULL;
     char buf[ERR_BUF_SIZE];
 
-    va_start(args, fmt);
-
-    if (vsnprintf(buf, ERR_BUF_SIZE, fmt, args) < 0) {
+    if (vsnprintf(buf, ERR_BUF_SIZE, fmt, ap) < 0) {
         return ERROR_NO_MEM;
     }
 
@@ -22,15 +19,38 @@ create_fatal_err(const char *fmt, ...) {
         return ERROR_NO_MEM;
     }
 
-    va_end(args);
     return (union error) {
         .description = dup
     };
 }
 
+union error
+create_fatal_err(const char *fmt, ...) {
+    union error err;
+    va_list args;
+
+    va_start(args, fmt);
+    err = va_create_fatal_err(fmt, args);
+    va_end(args);
+
+    return err;
+}
+
+void
+fail(const char *fmt, ...) {
+    union error err;
+    va_list args;
+
+    va_start(args, fmt);
+    err = va_create_fatal_err(fmt, args);
+    va_end(args);
+
+    exit(report_error(&err));
+}
+
 int
 report_error(const union error *e) {
-    if (IS_OK(*e)) {
+    if (IS_NORM(*e)) {
         return EXIT_SUCCESS;
     }
 

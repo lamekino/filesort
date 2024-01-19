@@ -12,33 +12,50 @@
 #endif /* DEBUG */
 
 enum error_level {
-    LEVEL_NONE,
+    LEVEL_SUCCESS,
     LEVEL_SKIP,
     LEVEL_FAILED,
     LEVEL_SPECIAL,
     LEVEL_NO_MEM,
-    LEVEL_END
 };
 
 union error {
-    enum error_level id;
+    enum error_level level;
     char *description;
 };
 
 #define ERR_BUF_SIZE 256
 
-#define NO_ERROR ((union error) { .id = LEVEL_NONE })
-#define ERROR_NO_MEM ((union error) { .id = LEVEL_NO_MEM })
-#define ERROR(lvl) ((union error) { .id = (lvl) })
+#define SUCCEED_LEVEL ((union error) { .level = LEVEL_SUCCESS })
+#define SKIP_LEVEL ((union error) { .level = LEVEL_SKIP })
+#define FAILED_LEVEL ((union error) { .level = LEVEL_FAILED })
+#define SPECIAL_LEVEL ((union error) { .level = LEVEL_SPECIAL })
+#define ERROR_NO_MEM ((union error) { .level = LEVEL_NO_MEM })
 
-#define HAS_ERROR(s) ((s).id > LEVEL_END)
-#define IS_OK(s) ((s).id == LEVEL_NONE)
-#define IS_LVL(s, lvl) ((s).id == (lvl))
+#define HAS_ERROR(e) ((e).level >= LEVEL_NO_MEM)
+#define IS_NORM(e) ((e).level == LEVEL_SUCCESS)
+#define IS_SPECIAL(e) ((e).level == LEVEL_SPECIAL)
+#define IS_LVL(e, id) ((e).level == (id))
 
 union error
 create_fatal_err(const char *fmt, ...);
 
+void
+fail(const char *fmt, ...);
+
 int
 report_error(const union error *);
+
+#ifdef DEBUG
+#define REPORT_MISSING_IMPL(e) \
+    do { \
+        if (!HAS_ERROR((e))) { \
+            (e) = create_fatal_err("%s: got unimplemented error level %ud", \
+                    __FUNCTION__, e.level); \
+        } \
+    } while (0)
+#else
+#define REPORT_MISSING(_)
+#endif
 
 #endif /* ERROR_HANDLING_H */

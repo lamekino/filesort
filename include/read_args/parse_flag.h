@@ -43,6 +43,7 @@ enum argument_type {
     HELP,
     STR,
     NUM,
+    USE_FILE,
 };
 
 struct number_argument {

@@ -30,10 +30,12 @@ set_flag(const struct argument_meta *data,
         break;
     case HELP:
         usage(stdout, argv[0]);
-        return ERROR(LEVEL_SKIP);
+        return SKIP_LEVEL;
     case STR:
         *data->str = argv[index + 1];
         break;
+    case USE_FILE:
+        return SPECIAL_LEVEL;
     case NUM:
         verified =
             verify_number(argv[index + 1], data->num.min, data->num.max);
@@ -50,7 +52,8 @@ set_flag(const struct argument_meta *data,
         ASSERT(0 && "unreachable");
         break;
     }
-    return NO_ERROR;
+
+    return SUCCEED_LEVEL;
 }
 
 

@@ -23,29 +23,29 @@ append_file_list(char ***list, size_t *len, char *filename) {
     *list = resized;
     *len += 1;
 
-    return NO_ERROR;
+    return SUCCEED_LEVEL;
 }
-
-
 
 union error
 read_args(size_t *number_of_files, char ***file_list, struct settings *settings,
         int argc, char *argv[]) {
-    union error level = NO_ERROR;
+    union error err = {0};
+    bool special_level = false;
     int adx = 1;
 
-    while (IS_OK(level) && adx < argc) {
-        const bool SKIP_FLAGS =
+    while (!HAS_ERROR(err) && adx < argc) {
+        const bool skip_flags =
             settings->use_flag_terminator || !HAS_FLAG(argv, adx);
 
-        if (!SKIP_FLAGS) {
-            level = handle_flag(&adx, argc, argv, settings);
+        if (!skip_flags) {
+            err = handle_flag(&adx, argc, argv, settings);
+            special_level |= IS_SPECIAL(err);
             continue;
         }
 
-        level = append_file_list(file_list, number_of_files, argv[adx]);
+        err = append_file_list(file_list, number_of_files, argv[adx]);
         adx++;
     }
 
-    return level;
+    return special_level? SPECIAL_LEVEL : err;
 }
