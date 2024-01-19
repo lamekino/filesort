@@ -1,7 +1,7 @@
 #ifndef OPERATIONS_H
 #define OPERATIONS_H
 
-typedef int (*fileop_func)(const char *, const char *);
+typedef int (*fileop)(const char *, const char *);
 
 int confirm_rename(const char *, const char *);
 int copy_file(const char *, const char *);
