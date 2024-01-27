@@ -6,24 +6,29 @@
 
 #include "types/multistack.h"
 
+#define ELEMSIZE(p) (sizeof(*(p)))
 #define INITIAL_STACK_CAPACITY 15u
-#define SIZE_AT(p) (sizeof(*(p)))
+
+static size_t
+next_capacity(size_t cur_capacity) {
+    return 2 * cur_capacity + 1;
+}
 
 static void *
-push(void *p, size_t *length, size_t *capacity, size_t elem_size) {
+prepush(void *p, size_t *length, size_t *capacity, size_t ELEMSIZE) {
     const size_t cur_cap = *capacity;
-    const size_t new_len = *length + 1;
-    const size_t new_cap = 2 * cur_cap + 1;
+    const size_t set_len = *length + 1;
 
     size_t set_cap = cur_cap;
     void *ys = p;
 
-    if (cur_cap > new_len) {
-        ys = realloc(p,  new_cap * elem_size);
-        set_cap = new_cap;
+    if (cur_cap > set_len) {
+        set_cap = next_capacity(cur_cap);
+        ys = realloc(p,  set_cap *  ELEMSIZE);
     }
-    if (ys) {
-        *length = new_len;
+
+    if (ys != NULL) {
+        *length = set_len;
         *capacity = set_cap;
     }
 
@@ -31,11 +36,11 @@ push(void *p, size_t *length, size_t *capacity, size_t elem_size) {
 }
 
 static struct stack *
-push_stack(struct multistack *ms, char *name, char **members,
-        size_t stack_cap) {
+push_stack(struct multistack *ms, char *name, char **members, size_t cap) {
     const size_t idx = ms->len - 1;
+
     struct stack *base =
-        push(ms->base, &ms->len, &ms->capacity, SIZE_AT(ms->base));
+        prepush(ms->base, &ms->len, &ms->capacity, ELEMSIZE(ms->base));
 
     if (!base) {
         return NULL;
@@ -46,11 +51,27 @@ push_stack(struct multistack *ms, char *name, char **members,
         (struct stack) {
             .name = name,
             .members = members,
-            .capacity = stack_cap,
+            .capacity = cap,
             .count = 0
         };
 
     return &ms->base[idx];
+}
+
+static char **
+push_string(struct stack *xs, char *name) {
+    const size_t idx = xs->count - 1;
+
+    char **members =
+        prepush(xs->members, &xs->count, &xs->capacity, ELEMSIZE(xs->members));
+
+    if (!members) {
+        return NULL;
+    }
+
+    xs->members = members;
+    xs->members[idx] = name;
+    return &xs->members[idx];
 }
 
 struct stack *
@@ -66,21 +87,6 @@ push_name(struct multistack *ms, char *name) {
     }
 
     return ys;
-}
-
-static char **
-push_string(struct stack *xs, char *name) {
-    const size_t idx = xs->count - 1;
-    char **members =
-        push(xs->members, &xs->count, &xs->capacity, SIZE_AT(xs->members));
-
-    if (!members) {
-        return NULL;
-    }
-
-    xs->members = members;
-    xs->members[idx] = name;
-    return &xs->members[idx];
 }
 
 char **
