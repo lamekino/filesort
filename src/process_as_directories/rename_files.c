@@ -7,10 +7,9 @@
 #include "types/settings.h"
 #include "types/hash_table.h"
 #include "types/multistack.h"
-#include "process_as_directories/generate_new_filenames.h"
+#include "generate_new_filename/generate_new_filenames.h"
 
 #define HASH_SIZE 2048u
-#define NEW_FILENAME_SIZE 256u
 
 static union error
 apply_rename(const struct settings *settings, const char *basename,
