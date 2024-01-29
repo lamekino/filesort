@@ -10,21 +10,25 @@
 #define INITIAL_STACK_CAPACITY 15u
 
 static size_t
-next_capacity(size_t cur_capacity) {
-    return 2 * cur_capacity + 1;
+next_capacity(size_t cap) {
+    return 2 * cap + 1;
+}
+
+static size_t
+capacity_update(size_t cur_cap, size_t len) {
+    if (len <= cur_cap) return cur_cap;
+    else return next_capacity(cur_cap);
 }
 
 static void *
-prepush(void *p, size_t *length, size_t *capacity, size_t ELEMSIZE) {
+prepush(void *p, size_t *length, size_t *capacity, size_t elem_size) {
+    void *ys = p;
     const size_t cur_cap = *capacity;
     const size_t set_len = *length + 1;
+    const size_t set_cap = capacity_update(cur_cap, set_len);
 
-    size_t set_cap = cur_cap;
-    void *ys = p;
-
-    if (cur_cap > set_len) {
-        set_cap = next_capacity(cur_cap);
-        ys = realloc(p,  set_cap *  ELEMSIZE);
+    if (set_cap > cur_cap) {
+        ys = realloc(p, set_cap *  elem_size);
     }
 
     if (ys != NULL) {
@@ -76,13 +80,13 @@ push_string(struct stack *xs, char *name) {
 
 struct stack *
 push_name(struct multistack *ms, char *name) {
+    char *title = strndup(name, PATH_MAX);
     char **members = calloc(INITIAL_STACK_CAPACITY, sizeof(char **));
-    char *dup = strndup(name, PATH_MAX);
-    struct stack *ys = push_stack(ms, dup, members, INITIAL_STACK_CAPACITY);
+    struct stack *ys = push_stack(ms, title, members, INITIAL_STACK_CAPACITY);
 
-    if (!ys || !members || !dup) {
+    if (!ys || !members || !title) {
         free(members);
-        free(dup);
+        free(title);
         return NULL;
     }
 
@@ -105,22 +109,22 @@ push_member(struct multistack *ms, char *member_name) {
 
 struct stack *
 pop_name(struct multistack *ms) {
-    if (ms->len) {
-        ms->len--;
-        return &ms->base[ms->len];
+    if (ms->len == 0) {
+        return NULL;
     }
 
-    return NULL;
+    ms->len--;
+    return &ms->base[ms->len];
 }
 
 char *
 pop_member(struct stack *xs) {
-    if (xs->count) {
-        xs->count--;
-        return xs->members[xs->count];
+    if (xs->count == 0) {
+        return NULL;
     }
 
-    return NULL;
+    xs->count--;
+    return xs->members[xs->count];
 }
 
 bool
