@@ -12,35 +12,45 @@ is_filtered(const char *filename) {
     return filename[0] == '.';
 }
 
+static int
+collect_directory(struct multistack *ms, DIR *dp) {
+    struct dirent *ent = NULL;
+
+    while ((ent = readdir(dp))) {
+        if (is_filtered(ent->d_name)) {
+            continue;
+        }
+
+        if (!push_member(ms, ent->d_name)) {
+            closedir(dp);
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
 union error
 collect_filenames(struct multistack *ms, char **dir_list, size_t len) {
     size_t i;
-    DIR *dp = NULL;
 
     for (i = 0; i < len; i++) {
-        struct dirent *ent = NULL;
+        DIR *dp = NULL;
+        char *dirname = dir_list[i];
 
-        if (!push_name(ms, dir_list[i])) {
+        if (!push_name(ms, dirname)) {
             return ERROR_NO_MEM;
         }
 
-        /* TODO: print warning, but continue */
-        dp = opendir(dir_list[i]);
+        dp = opendir(dirname);
         if (!dp) {
-            return create_fatal_err("could not open dir: '%s'", dir_list[i]);
+            /* TODO: print warning, but continue */
+            return create_fatal_err("could not open dir: '%s'", dirname);
         }
 
-        while ((ent = readdir(dp))) {
-            if (is_filtered(ent->d_name)) {
-                continue;
-            }
-
-            if (!push_member(ms, ent->d_name)) {
-                closedir(dp);
-                return ERROR_NO_MEM;
-            }
+        if (collect_directory(ms, dp) < 0) {
+            return ERROR_NO_MEM;
         }
-
         closedir(dp);
     }
 
