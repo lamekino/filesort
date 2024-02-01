@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#define NEW_FILENAME_SIZE 256u
+
 int str_append(char *buffer, size_t current_len, size_t max_len,
         const char *fmt, ...);
 
