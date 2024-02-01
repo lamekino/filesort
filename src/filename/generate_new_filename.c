@@ -1,4 +1,4 @@
-#include "process_as_directories/generate_new_filenames.h"
+#include "generate_new_filename/generate_new_filenames.h"
 #include "types/file_info.h"
 #include "types/strings.h"
 
