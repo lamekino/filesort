@@ -7,45 +7,36 @@
 #include "read_args/handle_flag.h"
 #include "types/error.h"
 #include "types/settings.h"
+#include "types/multistack.h"
 
 #define HAS_FLAG(xs, idx) ((xs)[(idx)][0] == '-')
-
-static union error
-append_file_list(char ***list, size_t *len, char *filename) {
-    const size_t idx = *len;
-    char **resized = realloc(*list, (idx + 1) * sizeof(*list));
-
-    if (resized == NULL) {
-        return ERROR_NO_MEM;
-    }
-    resized[idx] = filename;
-
-    *list = resized;
-    *len += 1;
-
-    return SUCCEED_LEVEL;
-}
 
 union error
 read_args(size_t *number_of_files, char ***file_list, struct settings *settings,
         int argc, char *argv[]) {
     union error err = {0};
-    bool special_level = false;
-    int adx = 1;
+    struct stack files = {0};
+    bool enable_file_mode = false;
+    int adx;
 
-    while (!HAS_ERROR(err) && adx < argc) {
+    for (adx = 1; !HAS_ERROR(err) && adx < argc; adx++) {
         const bool skip_flags =
             settings->use_flag_terminator || !HAS_FLAG(argv, adx);
 
         if (!skip_flags) {
             err = handle_flag(&adx, argc, argv, settings);
-            special_level |= IS_SPECIAL(err);
+            enable_file_mode |= IS_SPECIAL(err);
             continue;
         }
 
-        err = append_file_list(file_list, number_of_files, argv[adx]);
-        adx++;
+        if (!push_member_addr(&files, argv[adx])) {
+            cleanup_stack(&files);
+            return ERROR_NO_MEM;
+        }
     }
 
-    return special_level? SPECIAL_LEVEL : err;
+
+    *file_list = files.members;
+    if (!enable_file_mode) return err;
+    else return SPECIAL_LEVEL;
 }
