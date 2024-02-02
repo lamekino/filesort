@@ -5,6 +5,7 @@
 #include <limits.h> /* PATH_MAX */
 
 #include "types/multistack.h"
+#include "types/strings.h"
 
 #define ELEMSIZE(p) (sizeof(*(p)))
 #define INITIAL_STACK_CAPACITY 15u
@@ -27,11 +28,11 @@ prepush(void *p, size_t *length, size_t *capacity, size_t elem_size) {
     const size_t set_len = *length + 1;
     const size_t set_cap = capacity_update(cur_cap, set_len);
 
-    if (set_cap > cur_cap) {
+    if (cur_cap < set_cap) {
         ys = realloc(p, set_cap *  elem_size);
     }
 
-    if (ys != NULL) {
+    if (ys) {
         *length = set_len;
         *capacity = set_cap;
     }
@@ -62,8 +63,8 @@ push_stack(struct multistack *ms, char *name, char **members, size_t cap) {
     return &ms->base[idx];
 }
 
-static char **
-push_string(struct stack *xs, char *name) {
+char **
+push_member_addr(struct stack *xs, char *name) {
     const size_t idx = xs->count - 1;
 
     char **members =
@@ -79,25 +80,29 @@ push_string(struct stack *xs, char *name) {
 }
 
 struct stack *
-push_name(struct multistack *ms, char *name) {
+push_name_init_size(struct multistack *ms, char *name, size_t size) {
     char *title = strndup(name, PATH_MAX);
-    char **members = calloc(INITIAL_STACK_CAPACITY, sizeof(char **));
-    struct stack *ys = push_stack(ms, title, members, INITIAL_STACK_CAPACITY);
+    char **members = size? calloc(size, sizeof(char **)) : NULL;
 
-    if (!ys || !members || !title) {
-        free(members);
+    if (!title || (size && !(members))) {
         free(title);
+        free(members);
         return NULL;
     }
 
-    return ys;
+    return push_stack(ms, title, members, size);
+}
+
+struct stack *
+push_name(struct multistack *ms, char *name) {
+    return push_name_init_size(ms, name, INITIAL_STACK_CAPACITY);
 }
 
 char **
 push_member(struct multistack *ms, char *member_name) {
     struct stack *cur = &ms->base[ms->len - 1];
     char *dup = strndup(member_name, NEW_FILENAME_SIZE);
-    char **ys = push_string(cur, dup);
+    char **ys = push_member_addr(cur, dup);
 
     if (!ys || !dup) {
         free(dup);
@@ -133,16 +138,19 @@ is_empty(const struct multistack *ms) {
 }
 
 void
+cleanup_stack(struct stack *xs) {
+    while (xs->capacity--) {
+        free(xs->members[xs->capacity]);
+    }
+
+    free(xs->members);
+    free(xs->name);
+    free(xs);
+}
+
+void
 cleanup_multistack(struct multistack *ms) {
     while (ms->capacity--) {
-        struct stack *cur = &ms->base[ms->capacity];
-
-        while (cur->capacity--) {
-            free(cur->members[cur->capacity]);
-        }
-
-        free(cur->members);
-        free(cur->name);
-        free(cur);
+        cleanup_stack(&ms->base[ms->capacity]);
     }
 }

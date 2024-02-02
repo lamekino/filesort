@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#define NEW_FILENAME_SIZE 256u
-
 struct stack {
     char *name;
     char **members;
@@ -19,7 +17,13 @@ struct multistack {
 };
 
 struct stack *
+push_name_init_size(struct multistack *ms, char *name, size_t size);
+
+struct stack *
 push_name(struct multistack *ms, char *name);
+
+char **
+push_member_addr(struct stack *xs, char *name);
 
 char **
 push_member(struct multistack *ms, char *member);
@@ -32,6 +36,9 @@ pop_member(struct stack *xs);
 
 bool
 is_empty(const struct multistack *ms);
+
+void
+cleanup_stack(struct stack *xs);
 
 void
 cleanup_multistack(struct multistack *xs);
